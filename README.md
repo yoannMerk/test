@@ -7,7 +7,7 @@ asdf asdf sadf
 asdf adsfdf  as adsf
 
 sf sdf 
- asdfasdf 
+ asdfasdf sdaf asdf 
 run: |dsfasdfwf wef
 git tag "Mon_app_$SHA_$DATE" 22 
 git push --tagssadf sadf 
