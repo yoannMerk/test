@@ -41,3 +41,25 @@ jobs:
         run: | 
           git tag "Mon-app-$SHA-$DATE"
           git push --tags
+
+     # Add steps to retrieve commit hashes of the last two tags starting with 'ma-deuxieme-app'
+      - name: Get commit hashes of last two tags starting with 'ma-deuxieme-app'
+        id: get_commit_hashes
+        run: |
+          git fetch --tags
+          echo "TAGS=$(git tag --sort=-committerdate)" >> $GITHUB_ENV
+          MA_DEUXIEME_APP_TAGS=$(echo "$TAGS" | grep '^Mon-app-' | head -n 2)
+          FROM_TAG=$(echo "$MA_DEUXIEME_APP_TAGS" | sed -n 2p)
+          TO_TAG=$(echo "$MA_DEUXIEME_APP_TAGS" | sed -n 1p)
+          # Replace invalid characters in tag names with underscores
+          FROM_TAG_CLEAN=$(echo "$FROM_TAG" | tr - _)
+          TO_TAG_CLEAN=$(echo "$TO_TAG" | tr - _)
+          echo "FROM_TAG_HASH=$(git rev-parse $FROM_TAG)" >> $GITHUB_ENV
+          echo "TO_TAG_HASH=$(git rev-parse $TO_TAG)" >> $GITHUB_ENV
+          echo "FROM_TAG_HASH_CLEAN=$(git rev-parse $FROM_TAG_CLEAN)" >> $GITHUB_ENV
+          echo "TO_TAG_HASH_CLEAN=$(git rev-parse $TO_TAG_CLEAN)" >> $GITHUB_ENV
+
+      - name: Get commits between tags
+        id: get_commits_between_tags
+        run: |
+          git log --pretty=format:"%h %s" $FROM_TAG_HASH..$TO_TAG_HASH > commits.txt
