@@ -16,7 +16,7 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
-  deploy_job:
+  deploy:
     runs-on: ubuntu-latest
     # The type of runner that the job will run on
     steps:
@@ -29,55 +29,46 @@ jobs:
       - name: Run a one-line script
         run: echo Hello, world!
 
-      - name: Get hash of last commit and current date
+      - name: Create Tag
         run: |
           echo "SHA=$(git rev-parse --short "$GITHUB_SHA")" >> "$GITHUB_ENV"
           echo "DATE=$(TZ=America/Montreal date +'%Y%m%dT%H%M')" >> $GITHUB_ENV
+          git tag "Mon_app_${SHA}_$DATE"
+          git push --tags
+
+  create_tag:
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
 
       - name: Create Tag
         run: |
-          git tag "Mon_app_${SHA}_$DATE"
-          echo "SHA: $SHA"
+          echo "SHA=$(git rev-parse --short "$GITHUB_SHA")" >> "$GITHUB_ENV"
+          echo "DATE=$(TZ=America/Montreal date +'%Y%m%dT%H%M')" >> $GITHUB_ENV
+          git tag "mp_customer_web_${SHA}_$DATE"
           git push --tags
 
-  create_release_note_job:
-    needs: deploy_job
+
+  list_commits:
+    needs: create_tag
     runs-on: ubuntu-latest
+
     steps:
-      # Retrieve commit hashes of the last two tags form this current app
       - uses: actions/checkout@v3
       - name: Get commit hashes of last two tags for the current app
         run: |
           git fetch --tags
-          TAGS=$(git tag --sort=-committerdate | grep '^Mon_app_' | head -n 2)
+          TAGS=$(git tag --sort=-committerdate | grep '^mp_customer_web_' | head -n 2)
           FROM_TAG=$(echo "${TAGS}" | sed -n 2p)
           TO_TAG=$(echo "${TAGS}" | sed -n 1p)
           echo "FROM_TAG_HASH=$(git rev-parse "${FROM_TAG}")" >> $GITHUB_ENV
           echo "TO_TAG_HASH=$(git rev-parse "${TO_TAG}")" >> $GITHUB_ENV
 
-      # Afficher le répertoire de travail actuel
-      - name: Print current working directory
-        run: pwd
-
-      # Afficher les branches disponibles
-      - name: Print available branches
-        run: git branch -a
-
-      # Afficher les tags disponibles
-      - name: Print available tags
-        run: git tag --list
-
-      - name: Display FROM_TAG_HASH and TO_TAG_HASH
+      - name: List commits since the last tag
         run: |
-          echo "FROM_TAG_HASH: ${{ env.FROM_TAG_HASH }}"
-          echo "TO_TAG_HASH: ${{ env.TO_TAG_HASH }}"   
-
-
-      - name: Get commits between tags
-        run: | 
           git log --pretty=format:"%h %s" $FROM_TAG_HASH..$TO_TAG_HASH > commits.txt
           echo "Commits between tags: $(git log --pretty=format:'%h %s' $FROM_TAG_HASH..$TO_TAG_HASH)"
-          echo "git log --pretty=format:'%h %s' $FROM_TAG_HASH..$TO_TAG_HASH"
 
       - name: Display commits
         run: cat commits.txt
