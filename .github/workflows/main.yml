@@ -63,7 +63,9 @@ jobs:
 
 
       - name: Get commits between tags
-        run: git log --pretty=format:"%h %s" $FROM_TAG_HASH..$TO_TAG_HASH > commits.txt
+        run: | 
+          git log --pretty=format:"%h %s" $FROM_TAG_HASH..$TO_TAG_HASH > commits.txt
+          echo "git log --pretty=format:'%h %s' ${FROM_TAG_HASH}..{$TO_TAG_HASH}"
 
       - name: Display commits
         run: cat commits.txt
