@@ -49,6 +49,8 @@ jobs:
     # Add steps to retrieve commit hashes of the last two tags starting with 'ma-deuxieme-app'
       - name: Get commit hashes of last two tags starting with 'ma-deuxieme-app'
         id: get_commit_hashes
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git fetch --tags
           echo "TAGS=$(git tag --sort=-committerdate)" >> $GITHUB_ENV
