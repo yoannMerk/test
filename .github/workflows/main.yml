@@ -59,6 +59,11 @@ jobs:
           echo "TO_TAG_HASH=$(git rev-parse "${TO_TAG}")" >> $GITHUB_ENV
           echo "FROM_TAG: ${FROM_TAG}"
           echo "TO_TAG: ${TO_TAG}"
+          
+      - name: Display FROM_TAG_HASH and TO_TAG_HASH
+        run: |
+          echo "FROM_TAG_HASH: ${{ env.FROM_TAG_HASH }}"
+          echo "TO_TAG_HASH: ${{ env.TO_TAG_HASH }}"    
 
       - name: Get commits between tags
         id: get_commits_between_tags
