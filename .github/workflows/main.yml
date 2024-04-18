@@ -56,6 +56,18 @@ jobs:
           echo "FROM_TAG_HASH=$(git rev-parse "${FROM_TAG}")" >> $GITHUB_ENV
           echo "TO_TAG_HASH=$(git rev-parse "${TO_TAG}")" >> $GITHUB_ENV
 
+      # Afficher le répertoire de travail actuel
+      - name: Print current working directory
+        run: pwd
+
+      # Afficher les branches disponibles
+      - name: Print available branches
+        run: git branch -a
+
+      # Afficher les tags disponibles
+      - name: Print available tags
+        run: git tag --list
+
       - name: Display FROM_TAG_HASH and TO_TAG_HASH
         run: |
           echo "FROM_TAG_HASH: ${{ env.FROM_TAG_HASH }}"
