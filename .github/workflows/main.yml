@@ -21,44 +21,43 @@ jobs:
     # The type of runner that the job will run on
     steps:
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
+      # Steps represent a sequence of tasks that will be executed as part of the job
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
 
       # Runs a single command using the runners shell
       - name: Run a one-line script
         run: echo Hello, world!
-  
+
       - name: Get hash of last commit and current date
         run: |
           echo "SHA=$(git rev-parse --short "$GITHUB_SHA")" >> "$GITHUB_ENV"
           echo "DATE=$(TZ=America/Montreal date +'%Y%m%dT%H%M')" >> $GITHUB_ENV
-            
+
         # Runs a set of commands using the runners shell
       - name: Create Tag
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: | 
+        run: |
           git tag "Mon_app_$SHA_$DATE"
           git push --tags
-          
+
   create_release_note_job:
     needs: deploy_job
     runs-on: ubuntu-latest
-    steps: 
-    # Add steps to retrieve commit hashes of the last two tags starting with 'ma-deuxieme-app'
+    steps:
+      # Add steps to retrieve commit hashes of the last two tags starting with 'ma-deuxieme-app'
       - uses: actions/checkout@v3
-      - name: Get commit hashes of last two tags starting with 'ma-deuxieme-app'
+      - name: Get commit hashes of last two tags for the current app
         id: get_commit_hashes
         run: |
           git fetch --tags
-          echo "TAGS=$(git tag --sort=-committerdate)" >> $GITHUB_ENV
-          MA_DEUXIEME_APP_TAGS=$(git tag --sort=-committerdate | grep '^Mon_app_' | head -n 2)
-          FROM_TAG=$(echo "$MA_DEUXIEME_APP_TAGS" | sed -n 2p)
-          TO_TAG=$(echo "$MA_DEUXIEME_APP_TAGS" | sed -n 1p)
+          echo "TAGS==$(git tag --sort=-committerdate | grep '^Mon_app_' | head -n 2)  >> $GITHUB_ENV
+          FROM_TAG=$(echo "TAGS" | sed -n 2p)
+          TO_TAG=$(echo "TAGS" | sed -n 1p)
           echo "FROM_TAG_HASH=$(git rev-parse "$FROM_TAG")" >> $GITHUB_ENV
           echo "TO_TAG_HASH=$(git rev-parse "$TO_TAG")" >> $GITHUB_ENV
-        
+
       - name: Get commits between tags
         id: get_commits_between_tags
         run: |
