@@ -10,7 +10,7 @@ sf sdf
  asdfasdf 
 run: |dsfasdfwf wef
 git tag "Mon_app_$SHA_$DATE" 22 
-git push --tags
+git push --tagssadf sadf 
 
 create_release_note_job:
 needs: deploy_job
