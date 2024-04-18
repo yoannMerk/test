@@ -36,7 +36,7 @@ jobs:
 
       - name: Create Tag
         run: |
-          git tag "Mon_app_$SHA_$DATE"
+          git tag "Mon_app_${SHA}_$DATE"
           echo "SHA: $SHA"
           git push --tags
 
