@@ -29,12 +29,6 @@ jobs:
       - name: Run a one-line script
         run: echo Hello, world!
 
-      - name: Create Tag
-        run: |
-          echo "SHA=$(git rev-parse --short "$GITHUB_SHA")" >> "$GITHUB_ENV"
-          echo "DATE=$(TZ=America/Montreal date +'%Y%m%dT%H%M')" >> $GITHUB_ENV
-          git tag "Mon_app_${SHA}_$DATE"
-          git push --tags
 
   create_tag:
     needs: deploy
@@ -69,6 +63,7 @@ jobs:
         run: |
           git log --pretty=format:"%h %s" $FROM_TAG_HASH..$TO_TAG_HASH > commits.txt
           echo "Commits between tags: $(git log --pretty=format:'%h %s' $FROM_TAG_HASH..$TO_TAG_HASH)"
+          echo "git log --pretty=format:'%h %s' $FROM_TAG_HASH..$TO_TAG_HASH"
 
       - name: Display commits
         run: cat commits.txt
