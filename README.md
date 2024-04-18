@@ -6,10 +6,10 @@ asdf asdf sadf
 # asdf asdf asdf asdf  t est encore assadf sadf 
 asdf adsfdf  as adsf
 
-
+sf sdf 
  asdfasdf 
 run: |
-git tag "Mon_app_$SHA_$DATE"
+git tag "Mon_app_$SHA_$DATE" 
 git push --tags
 
 create_release_note_job:
