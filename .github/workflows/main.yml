@@ -36,10 +36,13 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Create Tag
+      - name: Get hash of last commit and current date
         run: |
           echo "SHA=$(git rev-parse --short "$GITHUB_SHA")" >> "$GITHUB_ENV"
-          echo "DATE=$(TZ=America/Montreal date +'%Y%m%dT%H%M')" >> $GITHUB_ENV
+          echo "DATE=$(TZ=America/Montreal date +'%Y%m%dT%H%M')" >> $GITHUB_ENV  
+
+      - name: Create Tag
+        run: |
           git tag "mp_customer_web_${SHA}_$DATE"
           git push --tags
 
