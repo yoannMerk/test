@@ -58,7 +58,7 @@ jobs:
           echo "FROM_TAG_HASH=$(git rev-parse "${FROM_TAG}")" >> $GITHUB_ENV
           echo "TO_TAG_HASH=$(git rev-parse "${TO_TAG}")" >> $GITHUB_ENV
           echo "FROM_TAG: ${FROM_TAG}"
-          echo "TO_TAG: ${TO_TAG}"
+          echo "TO_TAG: ${TO_TAG} plop => super"
 
       - name: Display FROM_TAG_HASH and TO_TAG_HASH
         run: |
