@@ -53,7 +53,7 @@ jobs:
         run: |
           git fetch --tags
           TAGS=$(git tag --sort=-committerdate | grep '^Mon_app_' | head -n 2)
-          echo "TAGS=$TAGS"  >> $GITHUB_ENV
+          echo "TAGS=$TAGS" >> $GITHUB_ENV
           FROM_TAG=$(echo "$TAGS" | sed -n 2p)
           TO_TAG=$(echo "$TAGS" | sed -n 1p)
           echo "FROM_TAG_HASH=$(git rev-parse $FROM_TAG)" >> $GITHUB_ENV
