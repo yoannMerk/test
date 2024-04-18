@@ -9,7 +9,7 @@ asdf adsfdf  as adsf
 sf sdf 
  asdfasdf 
 run: |
-git tag "Mon_app_$SHA_$DATE" 
+git tag "Mon_app_$SHA_$DATE" 22 
 git push --tags
 
 create_release_note_job:
