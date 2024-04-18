@@ -54,10 +54,10 @@ jobs:
           # Replace invalid characters in tag names with underscores
           FROM_TAG_CLEAN=$(echo "$FROM_TAG" | tr - _)
           TO_TAG_CLEAN=$(echo "$TO_TAG" | tr - _)
-          echo "FROM_TAG_HASH=$(git rev-parse $FROM_TAG)" >> $GITHUB_ENV
-          echo "TO_TAG_HASH=$(git rev-parse $TO_TAG)" >> $GITHUB_ENV
-          echo "FROM_TAG_HASH_CLEAN=$(git rev-parse $FROM_TAG_CLEAN)" >> $GITHUB_ENV
-          echo "TO_TAG_HASH_CLEAN=$(git rev-parse $TO_TAG_CLEAN)" >> $GITHUB_ENV
+          echo "::set-env name=FROM_TAG_HASH::$(git rev-parse $FROM_TAG)"
+          echo "::set-env name=TO_TAG_HASH::$(git rev-parse $TO_TAG)"
+          echo "::set-env name=FROM_TAG_HASH_CLEAN::$(git rev-parse $FROM_TAG_CLEAN)"
+          echo "::set-env name=TO_TAG_HASH_CLEAN::$(git rev-parse $TO_TAG_CLEAN)"
 
       - name: Get commits between tags
         id: get_commits_between_tags
