@@ -45,7 +45,7 @@ jobs:
     needs: deploy_job
     runs-on: ubuntu-latest
     steps:
-      # Add steps to retrieve commit hashes of the last two tags form this current app
+      # Retrieve commit hashes of the last two tags form this current app
       - uses: actions/checkout@v3
       - name: Get commit hashes of last two tags for the current app
         run: |
