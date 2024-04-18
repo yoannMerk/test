@@ -66,6 +66,8 @@ jobs:
         run: |
           git log --pretty=format:"%h %s" $FROM_TAG_HASH..$TO_TAG_HASH > commits.txt
           echo "Commits between tags: $(git log --pretty=format:'%h %s' $FROM_TAG_HASH..$TO_TAG_HASH)"
+          commits=$(git log --pretty=format:'%h %s' $FROM_TAG_HASH..$TO_TAG_HASH)
+          echo "$commits"  # Affiche les commits sur plusieurs lignes
           echo "git log --pretty=format:'%h %s' $FROM_TAG_HASH..$TO_TAG_HASH"
 
       - name: Display commits
