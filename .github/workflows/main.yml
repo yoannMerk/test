@@ -63,7 +63,7 @@ jobs:
       - name: Get commits between tags
         id: get_commits_between_tags
         run: |
-          git log --pretty=format:"%h %s" $FROM_TAG_HASH..$TO_TAG_HASH > commits.txt
+          git log --pretty=format:"%h %s" ${{ env.FROM_TAG_HASH }}..${{ env.TO_TAG_HASH }} > commits.txt
 
       - name: Display commits
         run: cat commits.txt
