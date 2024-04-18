@@ -5,6 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1c08e72d-9b69-445e-9848-e439d163e45c" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.github/workflows/main.yml" beforeDir="false" afterPath="$PROJECT_DIR$/.github/workflows/main.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -31,7 +33,7 @@
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "test-1/plop",
+    "git-widget-placeholder": "main",
     "last_opened_file_path": "/Users/yo/Documents/Dev/test",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
@@ -51,7 +53,7 @@
       <workItem from="1713445450071" duration="933000" />
       <workItem from="1713468401286" duration="4684000" />
       <workItem from="1713475904367" duration="18000" />
-      <workItem from="1713475931468" duration="1080000" />
+      <workItem from="1713475931468" duration="1374000" />
     </task>
     <servers />
   </component>
