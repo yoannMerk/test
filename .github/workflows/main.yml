@@ -44,7 +44,7 @@ jobs:
           
   create_release_note_job:
     needs: deploy_job
-    runs-on: ubuntu-lastest
+    runs-on: ubuntu-latest
     steps: 
     # Add steps to retrieve commit hashes of the last two tags starting with 'ma-deuxieme-app'
       - name: Get commit hashes of last two tags starting with 'ma-deuxieme-app'
