@@ -70,11 +70,12 @@ jobs:
       - name: Generate Slack message
         id: slack_message
         run: |
-          echo "::set-env name=SLACK_MESSAGE::''"
+          SLACK_MESSAGE=''
           git log --pretty=format:'{"type": "section", "text": {"type": "mrkdwn", "text": "%h %s"}},' $FROM_TAG_HASH..$TO_TAG_HASH |
           sed '$s/,$//' | while IFS= read -r line; do
             NEW_VALUE="${SLACK_MESSAGE},$line"
-            echo "::set-env name=SLACK_MESSAGE::$NEW_VALUE"
+            echo "SLACK_MESSAGE=$NEW_VALUE" 
+        
           done
           
           echo "SLACK_MESSAGE=$SLACK_MESSAGE" >> $GITHUB_ENV
