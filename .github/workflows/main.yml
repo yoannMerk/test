@@ -81,13 +81,7 @@ jobs:
         id: generate_json
         run: |
           # Créer un tableau JSON à partir des données de commit
-         CONTENT=$(git log --pretty=format:'{
-            "type": "section",
-            "text": {
-              "type": "mrkdwn",
-              "text": "hash: %h\nmessage: %s"
-            }
-          },' $FROM_TAG_HASH..$TO_TAG_HASH | sed '$s/,$//')
+          CONTENT=$(git log --pretty=format:'{"type": "section","text": {"type": "mrkdwn","text": "hash: %h\nmessage: %s"}},' $FROM_TAG_HASH..$TO_TAG_HASH | sed '$s/,$//')
           echo "[ $CONTENT ]" > commits.json
 
       - name: Read JSON file
