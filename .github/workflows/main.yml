@@ -88,6 +88,10 @@ jobs:
                   "text": {
                     "type": "mrkdwn",
                     "text": "*Production deployment check failed* :fire_engine:\n High error rate detected after deployment! Rolling back..."
+                  },
+                    "text": {
+                    "type": "mrkdwn",
+                    "text": "WOOW CA MACHE zBIEN "
                   }
                 }
               ]
