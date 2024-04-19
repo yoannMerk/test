@@ -79,19 +79,7 @@ jobs:
         uses: slackapi/slack-github-action@v1.24.0
         with:
           status: ${{ job.status }}
-          text: |
-            {
-              "text": "Liste des commits",
-              "blocks": [
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "$(cat commits.txt)"
-                  }
-                }
-              ]
-            }
+          payload: '{"text": "Liste des commits", "blocks": [{"type": "section", "text": {"type": "mrkdwn", "text": "'$(cat commits.txt)'"}]}'
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_NOTIFICATIONS_TOKEN }}
           SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
