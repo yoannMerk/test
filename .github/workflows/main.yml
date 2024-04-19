@@ -86,7 +86,7 @@ jobs:
           echo "test: &{SLACK}"
       - name: Read JSON file
         id: read_json
-        run: echo "::set-output name=content::$(cat commits.json)"
+        run: echo "::set-output name=content::$SLACK"
 
 
 
@@ -97,7 +97,7 @@ jobs:
           payload: |
             {
               "text": "Liste des commits",
-              "blocks": ${SLACK}
+              "blocks": "${{ steps.read_json.outputs.content }}"
             }
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_NOTIFICATIONS_TOKEN }}
