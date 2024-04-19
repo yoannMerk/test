@@ -88,8 +88,8 @@ jobs:
               "type": "mrkdwn",
               "text": "hash: %h\nmessage: %s"
             }
-          },' $FROM_TAG_HASH..$TO_TAG_HASH | sed '$s/,$//' >> commits.json
-          echo ']' >> commits.json
+          },' $FROM_TAG_HASH..$TO_TAG_HASH | sed '$s/,$//' > commits.json
+          echo ']' > commits.json
 
       - name: Read JSON file
         id: read_json
