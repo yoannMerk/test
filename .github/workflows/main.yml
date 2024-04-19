@@ -75,34 +75,32 @@ jobs:
       - name: Display commits
         run: cat commits.txt
 
+      
+
       - name: Generate JSON from commit data
         id: generate_json
         run: |
-            # Example command to generate JSON from commit data
-            echo '[' > commits.json
-            git log --pretty=format:'{"hash":"%h", "message":"%s"}' $FROM_TAG_HASH..$TO_TAG_HASH > commits.json
+          # Créer un tableau JSON à partir des données de commit
+          echo '[' > commits.json
+          git log --pretty=format:'{
+            "type": "section",
+            "text": {
+              "type": "mrkdwn",
+              "text": "hash: %h\nmessage: %s"
+            }
+          },' $FROM_TAG_HASH..$TO_TAG_HASH | sed '$s/,$//' >> commits.json
+          echo ']' >> commits.json
 
-            - name: Send Slack message
-              uses: slackapi/slack-github-action@v1.24.0
-              with:
-                status: ${{ job.status }}
-                payload: |
-                  {
-                    "text": "Liste des commits",
-                    "blocks": [
-                      {
-                        "type": "section",
-                        "text": {
-                          "type": "mrkdwn",
-                          "text": "*Liste des commits*"
-                        }
-                      },
-                      {
-                        "type": "divider"
-                      },
-                      ${{ steps.generate_json.outputs.commits }}
-                    ]
-                  }
+
+      - name: Notify commits in Slack
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          status: ${{ job.status }}
+          payload: |
+            {
+              "text": "Liste des commits",
+              "blocks": $(cat commits.json)
+            }
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_NOTIFICATIONS_TOKEN }}
           SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
