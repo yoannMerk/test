@@ -91,7 +91,7 @@ jobs:
           echo "SLACK_MESSAGES=$SLACK_MESSAGES" >> $GITHUB_ENV
       - name: Read JSON file
         id: read_json
-        run: echo "::set-output name=content::SLACK_MESSAGES"
+        run: echo "::set-output name=content::$SLACK_MESSAGES"
 
 
 
