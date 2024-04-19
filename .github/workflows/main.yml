@@ -94,23 +94,24 @@ jobs:
           status: ${{ job.status }}
           payload: |
             {
-              "text": "Liste des commits",
-              "blocks": [{
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "*Production deployment ended"
+                "text":"Liste des commits",
+                "blocks":[
+                  {
+                    "type":"section",
+                    "text":{
+                      "type":"mrkdwn",
+                      "text":"*Production deployment ended*"
+                    }
+                  },
+                  ${{ steps.read_json.outputs.content }},
+                  {
+                    "type":"section",
+                    "text":{
+                      "type":"mrkdwn",
+                      "text":"..."
+                    }
                   }
-                },
-            ${{ steps.read_json.outputs.content }},
-            {
-              "type": "section",
-              "text": {
-                "type": "mrkdwn",
-                "text": "..."
-              }
-            }
-            ]
+              ]
             }
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_NOTIFICATIONS_TOKEN }}
