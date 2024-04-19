@@ -82,7 +82,7 @@ jobs:
         id: slack_messages
         run: |
           SLACK_MESSAGES=''
-          git log --pretty=format:'{"type": "section", "text": {"type": "mrkdwn", "text": "%h %s"}}' ${{ github.event.before }}..${{ github.sha }} |
+          git log --pretty=format:'{"type": "section","text": {"type": "mrkdwn","text": "%h %s"}},' $FROM_TAG_HASH..$TO_TAG_HASH |
           while IFS= read -r line; do
               SLACK_MESSAGES="$SLACK_MESSAGES$line,"
           done
