@@ -73,7 +73,8 @@ jobs:
           run: echo "::set-env name=SLACK_MESSAGE::''"
           git log --pretty=format:'{"type": "section", "text": {"type": "mrkdwn", "text": "%h %s"}},' $FROM_TAG_HASH..$TO_TAG_HASH |
           sed '$s/,$//' | while IFS= read -r line; do
-           echo "::set-env name=SLACK_MESSAGE::${{ env.$SLACK_MESSAGE }},$line"
+            NEW_VALUE="${SLACK_MESSAGE},$line"
+            echo "::set-env name=SLACK_MESSAGE::$NEW_VALUE"
           done
           
           echo "SLACK_MESSAGE=$SLACK_MESSAGE" >> $GITHUB_ENV
