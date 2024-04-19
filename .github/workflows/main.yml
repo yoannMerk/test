@@ -78,22 +78,22 @@ jobs:
 
 
 
+      - name: Generate JSON from commit data
+        id: generate_json
 
-      - name: Generate Slack messages
-        id: slack_messages
         run: |
-            SLACK_MESSAGES='{"messages": []}'
-            git log --pretty=format:'{"type": "section", "text": {"type": "mrkdwn", "text": "%h %s"}}' ${{ github.event.before }}..${{ github.sha }} |
-            while IFS= read -r line; do
-                SLACK_MESSAGES=$(jq '.messages += ['"$line"']' <<< "$SLACK_MESSAGES")
-            done
-            SLACK_MESSAGES=$(echo "$SLACK_MESSAGES" | sed '$s/,$//')
-            echo "SLACK=$SLACK_MESSAGES" >> $GITHUB_ENV
+          SLACK_MESSAGE='{"blocks": [{"type": "section", "text": {"type": "mrkdwn", "text": "*Commits:*"}}'
+          git log --pretty=format:'{"type": "section", "text": {"type": "mrkdwn", "text": "%h %s"}}' ${{ github.event.before }}..${{ github.sha }} |
+          while IFS= read -r line; do
+             SLACK_MESSAGE=$(jq -n --argjson message "$line" '$message as $m | .blocks += [{"type": "section", "text": {"type": "mrkdwn", "text": $m.text}}]' <<< "$SLACK_MESSAGE")
+          done
+          SLACK_MESSAGE=$(echo "$SLACK_MESSAGE" | sed '$s/,$//')
+          SLACK_MESSAGE="$SLACK_MESSAGE]}"
 
-
+          echo "SLACK_MESSAGE=$SLACK_MESSAGE" >> $GITHUB_ENV
       - name: Read JSON file
         id: read_json
-        run: echo "::set-output name=content::SLACK"
+        run: echo "::set-output name=content::SLACK_MESSAGE"
 
 
 
