@@ -19,6 +19,8 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     # The type of runner that the job will run on
+    outouts:
+      tag: ${{ steps.list-tags.outputs.tag }}
     steps:
 
       # Steps represent a sequence of tasks that will be executed as part of the job
@@ -54,6 +56,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Get commit hashes of last two tags for the current app
+        id: list-tags
         run: |
           git fetch --tags
           TAGS=$(git tag --sort=-committerdate | grep '^mp_customer_web_' | head -n 2)
@@ -61,6 +64,9 @@ jobs:
           TO_TAG=$(echo "${TAGS}" | sed -n 1p)
           echo "FROM_TAG_HASH=$(git rev-parse "${FROM_TAG}")" >> $GITHUB_ENV
           echo "TO_TAG_HASH=$(git rev-parse "${TO_TAG}")" >> $GITHUB_ENV
+        with:
+          tag: $TO_TAG_HASH
+
 
       - name: List commits since the last tag
         run: |
@@ -79,6 +85,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: $TO_TAG_HASH
-          release_name: $TO_TAG_HASH
+          tag_name: {{ needs.list-tags.outputs.tag }}
+          release_name: {{ needs.list-tags.outputs.tag }}
           body: awk '{print "* " $2}' commits.txt > release_note.txt
