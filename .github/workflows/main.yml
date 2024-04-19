@@ -43,7 +43,7 @@ jobs:
 
       - name: Create Tag
         run: |
-          git tag "mp_customer_web_${SHA}_$DATE"
+          git tag "mp_customer_web_${DATE}_$SHA"
           git push --tags
 
 
@@ -66,18 +66,6 @@ jobs:
           echo "TO_TAG_HASH=$(git rev-parse "${TO_TAG}")" >> $GITHUB_ENV
 
 
-      - name: List commits since the last tag
-        run: |
-          git log --pretty=format:"%h %s" $FROM_TAG_HASH..$TO_TAG_HASH > commits.txt
-          echo "List of commits between tags: $(git log --pretty=format:'%h %s' $FROM_TAG_HASH..$TO_TAG_HASH)"
-          echo "git log --pretty=format:'%h %s' $FROM_TAG_HASH..$TO_TAG_HASH"
-
-      - name: Display commits
-        run: cat commits.txt
-
-
-
-
       - name: Generate Slack messages
         id: slack_messages
         run: |
@@ -91,7 +79,9 @@ jobs:
           echo "SLACK_MESSAGES=$SLACK_MESSAGES" >> $GITHUB_ENV
       - name: Read JSON file
         id: read_json
-        run: echo "::set-output name=content::$SLACK_MESSAGES"
+        run: |
+          echo "::set-output name=content::$SLACK_MESSAGES"
+          echo "la liste est : $SLACK_MESSAGES"
 
 
 
