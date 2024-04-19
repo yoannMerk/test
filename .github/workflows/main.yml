@@ -113,7 +113,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "```$(cat commits.json)```"
+                    "text": "```${{(cat commits.json)}}```"
                   }
                 }
               ]
