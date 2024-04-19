@@ -98,7 +98,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "${{ steps.format_commits.outputs.formatted_commits }}"
+                    "text": "*Liste des commits*\n$(cat commits.txt)"
                   }
                 }
               ]
