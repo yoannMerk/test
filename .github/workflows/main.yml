@@ -75,6 +75,14 @@ jobs:
       - name: Display commits
         run: cat commits.txt
 
+      - name: Generate JSON from commit data
+        id: generate_json
+        run: |
+          # Example command to generate JSON from commit data
+          echo '[' > commits.json
+          git log --pretty=format:'{"hash":"%h", "message":"%s"},' $FROM_TAG_HASH..$TO_TAG_HASH | sed '$s/,$//' >> commits.json
+          echo ']' >> commits.json  
+
       - name: Read commits from file
         id: read_commits
         run: echo "::set-output name=commits::$(cat commits.txt)"
@@ -92,13 +100,20 @@ jobs:
           status: ${{ job.status }}
           payload: |
             {
-              "text": "GitHub Action",
+              "text": "Liste des commits",
               "blocks": [
                 {
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "*Liste des commits*\n$({{ readFile('commits.txt') }})"
+                    "text": "*Liste des commits*"
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "```$(cat commits.json)```"
                   }
                 }
               ]
