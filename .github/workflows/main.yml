@@ -79,7 +79,19 @@ jobs:
         uses: slackapi/slack-github-action@v1.24.0
         with:
           status: ${{ job.status }}
-          payload: '{"text": "Liste des commits", "blocks": [{"type": "section", "text": {"type": "mrkdwn", "text": "'$(cat commits.txt | sed -e 's/"/\\"/g')'"}}]}'
+          payload: |
+            {
+              "text": "GitHub Action",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*Production deployment check failed* :fire_engine:\n High error rate detected after deployment! Rolling back..."
+                  }
+                }
+              ]
+            }
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_NOTIFICATIONS_TOKEN }}
           SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
