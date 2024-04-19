@@ -78,46 +78,31 @@ jobs:
       - name: Generate JSON from commit data
         id: generate_json
         run: |
-          # Example command to generate JSON from commit data
-          echo '[' > commits.json
-          git log --pretty=format:'{"hash":"%h", "message":"%s"},' $FROM_TAG_HASH..$TO_TAG_HASH | sed '$s/,$//' >> commits.json
-          echo ']' >> commits.json  
+            # Example command to generate JSON from commit data
+            echo '[' > commits.json
+            git log --pretty=format:'{"hash":"%h", "message":"%s"}' $FROM_TAG_HASH..$TO_TAG_HASH > commits.json
 
-      - name: Read commits from file
-        id: read_commits
-        run: echo "::set-output name=commits::$(cat commits.txt)"
-
-      - name: Format commits as bullet list
-        id: format_commits
-        run: |
-          COMMIT_LIST=$(echo "${{ steps.read_commits.outputs.commits }}" | sed 's/^/- /')
-          echo "::set-output name=formatted_commits::${COMMIT_LIST}"
-
-
-      - name: Notify commits in Slack
-        uses: slackapi/slack-github-action@v1.24.0
-        with:
-          status: ${{ job.status }}
-          payload: |
-            {
-              "text": "Liste des commits",
-              "blocks": [
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "*Liste des commits*"
+            - name: Send Slack message
+              uses: slackapi/slack-github-action@v1.24.0
+              with:
+                status: ${{ job.status }}
+                payload: |
+                  {
+                    "text": "Liste des commits",
+                    "blocks": [
+                      {
+                        "type": "section",
+                        "text": {
+                          "type": "mrkdwn",
+                          "text": "*Liste des commits*"
+                        }
+                      },
+                      {
+                        "type": "divider"
+                      },
+                      ${{ steps.generate_json.outputs.commits }}
+                    ]
                   }
-                },
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "$(git log --pretty=format:"%h %s" $FROM_TAG_HASH..$TO_TAG_HASH)"
-                  }
-                }
-              ]
-            }
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_NOTIFICATIONS_TOKEN }}
           SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
