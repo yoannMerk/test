@@ -75,6 +75,11 @@ jobs:
       - name: Display commits
         run: cat commits.txt
 
+      - name: Read commits from file
+        id: read_commits
+        run: echo "::set-output name=commits::$(cat commits.txt)"
+
+
       - name: Notify commits in Slack
         uses: slackapi/slack-github-action@v1.24.0
         with:
@@ -87,11 +92,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "*Production deployment check failed* :fire_engine:\n High error rate detected after deployment! Rolling back..."
-                  },
-                    "text": {
-                    "type": "mrkdwn",
-                    "text": "WOOW CA MACHE zBIEN "
+                    "text": "${{ steps.read_commits.outputs.commits }}"
                   }
                 }
               ]
