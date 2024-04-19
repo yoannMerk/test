@@ -74,3 +74,14 @@ jobs:
 
       - name: Display commits
         run: cat commits.txt
+
+      - name: Notify commits in Slack
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          status: ${{ job.status }}
+          text: |
+            List of commits between tags:
+            $(cat commits.txt)
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_NOTIFICATIONS_TOKEN }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
