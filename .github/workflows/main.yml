@@ -20,14 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     # The type of runner that the job will run on
     steps:
-
-      # Steps represent a sequence of tasks that will be executed as part of the job
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
-
-      # Runs a single command using the runners shell
-      - name: Run a one-line script
-        run: echo Hello, world!
 
 
   create_tag:
@@ -65,22 +58,10 @@ jobs:
           echo "FROM_TAG_HASH=$(git rev-parse "${FROM_TAG}")" >> $GITHUB_ENV
           echo "TO_TAG_HASH=$(git rev-parse "${TO_TAG}")" >> $GITHUB_ENV
 
-
-      - name: List commits since the last tag
-        run: |
-          git log --pretty=format:"%h %s" $FROM_TAG_HASH..$TO_TAG_HASH > commits.txt
-          echo "List of commits between tags: $(git log --pretty=format:'%h %s' $FROM_TAG_HASH..$TO_TAG_HASH)"
-          echo "git log --pretty=format:'%h %s' $FROM_TAG_HASH..$TO_TAG_HASH"
-
-      - name: Display commits
-        run: cat commits.txt
-
-
-
-      - name: Generate JSON from commit data
+      - name: Generate JSON
         id: generate_json
         run: |
-          echo "SLACK=$(git log --pretty=format:'{"type": "section","text": {"type": "mrkdwn","text": "hash: %h\nmessage: %s"}},' $FROM_TAG_HASH..$TO_TAG_HASH | sed '$s/,$//')" >> "$GITHUB_ENV"
+          echo "SLACK=$(git log --pretty=format:'{"type": "section","text": {"type": "mrkdwn","text": "%h %s"}},' $FROM_TAG_HASH..$TO_TAG_HASH | sed '$s/,$//')" >> "$GITHUB_ENV"
           echo "test: &{SLACK}"
       - name: Read JSON file
         id: read_json
@@ -100,7 +81,14 @@ jobs:
                     "type":"section",
                     "text":{
                       "type":"mrkdwn",
-                      "text":"*Production deployment ended*"
+                      "text":"**Production deployment succeed**"
+                    }
+                  },
+                  {
+                    "type":"section",
+                    "text":{
+                      "type":"mrkdwn",
+                      "text":"*Marketplace web app*"
                     }
                   },
                   ${{ steps.read_json.outputs.content }},
@@ -108,7 +96,7 @@ jobs:
                     "type":"section",
                     "text":{
                       "type":"mrkdwn",
-                      "text":"..."
+                      "text":"🚀🚀🚀"
                     }
                   }
               ]
