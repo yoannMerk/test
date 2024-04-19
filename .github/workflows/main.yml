@@ -97,7 +97,7 @@ jobs:
           payload: |
             {
               "text": "Liste des commits",
-              "blocks": $SLACK
+              "blocks": ${SLACK}
             }
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_NOTIFICATIONS_TOKEN }}
