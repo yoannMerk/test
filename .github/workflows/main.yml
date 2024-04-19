@@ -70,8 +70,7 @@ jobs:
       - name: Generate Slack message
         id: slack_message
         run: |
-          SLACK_MESSAGE='{ "blocks": [ {"type": "section", "text": {"type": "mrkdwn", "text": "*Commits:*"}}'
-          # Récupération de tous les commits et formatage de chaque commit
+          SLACK_MESSAGES=''
           git log --pretty=format:'{"type": "section", "text": {"type": "mrkdwn", "text": "%h %s"}},' $FROM_TAG_HASH..$TO_TAG_HASH |
           sed '$s/,$//' | while IFS= read -r line; do
            SLACK_MESSAGE="$SLACK_MESSAGE,$line"
@@ -79,14 +78,46 @@ jobs:
           SLACK_MESSAGE="$SLACK_MESSAGE ]}"
           
           echo "SLACK_MESSAGE=$SLACK_MESSAGE" >> $GITHUB_ENV
-          echo "SLAIC MESSAGE $SLACK_MESSAGE"
+          echo "SLAIC MESSAGE $SLACK_MESSAGE ${SLACK_MESSAGE}"
 
-      - name: Post to Slack
+      - name: Read JSON file
+        id: read_json
+        run: echo "::set-output name=content::$SLACK"
+
+
+
+      - name: Notify commits in Slack
         uses: slackapi/slack-github-action@v1.24.0
         with:
           status: ${{ job.status }}
-          fields: text
-          fields-template: ${{ steps.slack_message.outputs.SLACK_MESSAGE }}
+          payload: |
+            {
+                "text":"Liste des commits",
+                "blocks":[
+                  {
+                    "type":"section",
+                    "text":{
+                      "type":"mrkdwn",
+                      "text":"*Production deployment ended*"
+                    }
+                  },
+                  {
+                    "type":"section",
+                    "text":{
+                      "type":"mrkdwn",
+                      "text":"_Marketplace web app_"
+                    }
+                  },
+                  ${{ steps.read_json.outputs.content }},
+                  {
+                    "type":"section",
+                    "text":{
+                      "type":"mrkdwn",
+                      "text":"🚀 🚀 🚀"
+                    }
+                  }
+              ]
+            }
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_NOTIFICATIONS_TOKEN }}
           SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
