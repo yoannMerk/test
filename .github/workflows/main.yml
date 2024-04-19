@@ -82,7 +82,7 @@ jobs:
         run: |
           # Créer un tableau JSON à partir des données de commit
           CONTENT=$(git log --pretty=format:'{"type": "section","text": {"type": "mrkdwn","text": "hash: %h\nmessage: %s"}},' $FROM_TAG_HASH..$TO_TAG_HASH | sed '$s/,$//') 
-          echo "::set-output name=content::'[ $CONTENT ]'"
+          SLACK="[ $CONTENT ]"
 
       - name: Read JSON file
         id: read_json
@@ -97,7 +97,7 @@ jobs:
           payload: |
             {
               "text": "Liste des commits",
-              "blocks": ${{ steps.read_json.outputs.content }}
+              "blocks": ${SLACK}
             }
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_NOTIFICATIONS_TOKEN }}
