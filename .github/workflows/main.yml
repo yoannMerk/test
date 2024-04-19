@@ -82,14 +82,14 @@ jobs:
         id: generate_json
 
         run: |
-          SLACK_MESSAGE='{"type": "section", "text": {"type": "mrkdwn", "text": "*Commits:*"}}'
-          git log --pretty=format:'{"type": "section", "text": {"type": "mrkdwn", "text": "%h %s"}}' ${{ github.event.before }}..${{ github.sha }} |
+          SLACK_MESSAGE='{ "blocks": [ {"type": "section", "text": {"type": "mrkdwn", "text": "*Commits:*"}},'
+          git log --pretty=format:'{"type": "section", "text": {"type": "mrkdwn", "text": "%h %s"}},' ${{ github.event.before }}..${{ github.sha }} |
           while IFS= read -r line; do
-             SLACK_MESSAGE=$(jq -n --argjson message "$line" '$message as $m | .blocks += [{"type": "section", "text": {"type": "mrkdwn", "text": $m.text}' <<< "$SLACK_MESSAGE")
+              SLACK_MESSAGE="$SLACK_MESSAGE $line,"
           done
-          SLACK_MESSAGE=$(echo "$SLACK_MESSAGE" | sed '$s/,$//')
-          SLACK_MESSAGE="$SLACK_MESSAGE]}"
-
+          SLACK_MESSAGE="${SLACK_MESSAGE%?}"
+          SLACK_MESSAGE="$SLACK_MESSAGE ]}"
+          
           echo "SLACK_MESSAGE=$SLACK_MESSAGE" >> $GITHUB_ENV
       - name: Read JSON file
         id: read_json
