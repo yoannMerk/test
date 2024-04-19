@@ -77,14 +77,23 @@ jobs:
 
 
 
-      - name: Generate JSON from commit data
-        id: generate_json
+
+
+      - name: Generate Slack messages
+        id: slack_messages
         run: |
-          echo "SLACK=$(git log --pretty=format:'{"type": "section","text": {"type": "mrkdwn","text": "%h %s"}},' $FROM_TAG_HASH..$TO_TAG_HASH | sed '$s/,$//')" >> "$GITHUB_ENV"
-          echo "test: &{SLACK}"
+            SLACK_MESSAGES='{"messages": []}'
+            git log --pretty=format:'{"type": "section", "text": {"type": "mrkdwn", "text": "%h %s"}}' ${{ github.event.before }}..${{ github.sha }} |
+            while IFS= read -r line; do
+                SLACK_MESSAGES=$(jq '.messages += ['"$line"']' <<< "$SLACK_MESSAGES")
+            done
+            SLACK_MESSAGES=$(echo "$SLACK_MESSAGES" | sed '$s/,$//')
+            echo "SLACK_MESSAGES=$SLACK_MESSAGES" >> $GITHUB_ENV
+
+
       - name: Read JSON file
         id: read_json
-        run: echo "::set-output name=content::$SLACK"
+        run: echo "::set-output name=content::SLACK_MESSAGES"
 
 
 
@@ -100,14 +109,14 @@ jobs:
                     "type":"section",
                     "text":{
                       "type":"mrkdwn",
-                      "text":"**Production deployment ended**"
+                      "text":"*Production deployment ended*"
                     }
                   },
                   {
                     "type":"section",
                     "text":{
                       "type":"mrkdwn",
-                      "text":"*Marketplace web app*"
+                      "text":"_Marketplace web app_"
                     }
                   },
                   ${{ steps.read_json.outputs.content }},
