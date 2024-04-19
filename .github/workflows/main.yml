@@ -66,57 +66,26 @@ jobs:
           echo "TO_TAG_HASH=$(git rev-parse "${TO_TAG}")" >> $GITHUB_ENV
 
 
-      - name: Generate Slack messages
-        id: slack_messages
+
+      - name: Generate Slack message
+        id: slack_message
         run: |
-          SLACK_MESSAGES=''
-          git log --pretty=format:'{"type": "section","text": {"type": "mrkdwn","text": "%h %s"}},' $FROM_TAG_HASH..$TO_TAG_HASH | sed '$s/,$//'
+          SLACK_MESSAGE='{ "blocks": [ {"type": "section", "text": {"type": "mrkdwn", "text": "*Commits:*"}},'
+          git log --pretty=format:'{"type": "section", "text": {"type": "mrkdwn", "text": "%h %s"}},' $FROM_TAG_HASH..$TO_TAG_HASH |
           while IFS= read -r line; do
-              SLACK_MESSAGES="$SLACK_MESSAGES$line,"
+             SLACK_MESSAGE="$SLACK_MESSAGE $line,"
           done
-          SLACK_MESSAGES="${SLACK_MESSAGES%,}"
+          SLACK_MESSAGE="${SLACK_MESSAGE%?}"
+          SLACK_MESSAGE="$SLACK_MESSAGE ]}"
             
-          echo "SLACK_MESSAGES=$SLACK_MESSAGES" >> $GITHUB_ENV
-      - name: Read JSON file
-        id: read_json
-        run: |
-          echo "::set-output name=content::$SLACK_MESSAGES"
-          echo "la liste est : $SLACK_MESSAGES"
+          echo "SLACK_MESSAGE=$SLACK_MESSAGE" >> $GITHUB_ENV
 
-
-
-      - name: Notify commits in Slack
+      - name: Post to Slack
         uses: slackapi/slack-github-action@v1.24.0
         with:
           status: ${{ job.status }}
-          payload: |
-            {
-                "text":"Liste des commits",
-                "blocks":[
-                  {
-                    "type":"section",
-                    "text":{
-                      "type":"mrkdwn",
-                      "text":"*Production deployment ended*"
-                    }
-                  },
-                  {
-                    "type":"section",
-                    "text":{
-                      "type":"mrkdwn",
-                      "text":"_Marketplace web app_"
-                    }
-                  },
-                  ${{ steps.read_json.outputs.content }},
-                  {
-                    "type":"section",
-                    "text":{
-                      "type":"mrkdwn",
-                      "text":"🚀 🚀 🚀"
-                    }
-                  }
-              ]
-            }
+          fields: text
+          fields-template: ${{ steps.slack_message.outputs.SLACK_MESSAGE }}
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_NOTIFICATIONS_TOKEN }}
           SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
