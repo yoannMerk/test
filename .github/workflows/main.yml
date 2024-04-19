@@ -95,7 +95,7 @@ jobs:
           payload: |
             {
                 "text":"Liste des commits",
-                "blocks":[
+                {[
                   {
                     "type":"section",
                     "text":{
@@ -111,7 +111,7 @@ jobs:
                       "text":"..."
                     }
                   }
-              ]
+              ]}
             }
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_NOTIFICATIONS_TOKEN }}
