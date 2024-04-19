@@ -79,6 +79,7 @@ jobs:
           SLACK_MESSAGE="$SLACK_MESSAGE ]}"
             
           echo "SLACK_MESSAGE=$SLACK_MESSAGE" >> $GITHUB_ENV
+          echo "SLAIC MESSAGE $SLACK_MESSAGE"
 
       - name: Post to Slack
         uses: slackapi/slack-github-action@v1.24.0
