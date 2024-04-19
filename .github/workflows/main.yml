@@ -79,6 +79,12 @@ jobs:
         id: read_commits
         run: echo "::set-output name=commits::$(cat commits.txt)"
 
+      - name: Format commits as bullet list
+        id: format_commits
+        run: |
+          COMMIT_LIST=$(echo "${{ steps.read_commits.outputs.commits }}" | sed 's/^/- /')
+          echo "::set-output name=formatted_commits::${COMMIT_LIST}"
+
 
       - name: Notify commits in Slack
         uses: slackapi/slack-github-action@v1.24.0
@@ -92,7 +98,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "${{ steps.read_commits.outputs.commits }}"
+                    "text": "${{ steps.format_commits.outputs.formatted_commits }}"
                   }
                 }
               ]
