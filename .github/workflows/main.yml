@@ -88,12 +88,12 @@ jobs:
                 SLACK_MESSAGES=$(jq '.messages += ['"$line"']' <<< "$SLACK_MESSAGES")
             done
             SLACK_MESSAGES=$(echo "$SLACK_MESSAGES" | sed '$s/,$//')
-            echo "SLACK_MESSAGES=$SLACK_MESSAGES" >> $GITHUB_ENV
+            echo "SLACK=$SLACK_MESSAGES" >> $GITHUB_ENV
 
 
       - name: Read JSON file
         id: read_json
-        run: echo "::set-output name=content::SLACK_MESSAGES"
+        run: echo "::set-output name=content::SLACK"
 
 
 
