@@ -113,7 +113,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "```${{(cat commits.json)}}```"
+                    "text": ${{git log --pretty=format:"%h %s" $FROM_TAG_HASH..$TO_TAG_HASH}}
                   }
                 }
               ]
