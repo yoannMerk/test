@@ -80,7 +80,7 @@ jobs:
       - name: Generate JSON from commit data
         id: generate_json
         run: |
-          echo "SLACK=[$(git log --pretty=format:'{"type": "section","text": {"type": "mrkdwn","text": "hash: %h\nmessage: %s"}},' $FROM_TAG_HASH..$TO_TAG_HASH | sed '$s/,$//')]" >> "$GITHUB_ENV"
+          echo "SLACK=$(git log --pretty=format:'{"type": "section","text": {"type": "mrkdwn","text": "hash: %h\nmessage: %s"}},' $FROM_TAG_HASH..$TO_TAG_HASH | sed '$s/,$//')" >> "$GITHUB_ENV"
           echo "test: &{SLACK}"
       - name: Read JSON file
         id: read_json
@@ -95,7 +95,7 @@ jobs:
           payload: |
             {
                 "text":"Liste des commits",
-                {[
+                "blocks":[
                   {
                     "type":"section",
                     "text":{
@@ -111,7 +111,7 @@ jobs:
                       "text":"..."
                     }
                   }
-              ]}
+              ]
             }
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_NOTIFICATIONS_TOKEN }}
