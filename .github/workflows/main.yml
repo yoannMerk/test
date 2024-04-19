@@ -83,7 +83,7 @@ jobs:
           # Créer un tableau JSON à partir des données de commit
           CONTENT=$(git log --pretty=format:'{"type": "section","text": {"type": "mrkdwn","text": "hash: %h\nmessage: %s"}},' $FROM_TAG_HASH..$TO_TAG_HASH | sed '$s/,$//') 
           echo "SLACK=[$(git log --pretty=format:'{"type": "section","text": {"type": "mrkdwn","text": "hash: %h\nmessage: %s"}},' $FROM_TAG_HASH..$TO_TAG_HASH | sed '$s/,$//')]" >> "$GITHUB_ENV"
-
+          echo "test: &SLACK"
       - name: Read JSON file
         id: read_json
         run: echo "::set-output name=content::$(cat commits.json)"
