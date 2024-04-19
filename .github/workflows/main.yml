@@ -100,7 +100,14 @@ jobs:
                     "type":"section",
                     "text":{
                       "type":"mrkdwn",
-                      "text":"*Production deployment ended*"
+                      "text":"**Production deployment ended**"
+                    }
+                  },
+                  {
+                    "type":"section",
+                    "text":{
+                      "type":"mrkdwn",
+                      "text":"*Marketplace web app*"
                     }
                   },
                   ${{ steps.read_json.outputs.content }},
@@ -108,7 +115,7 @@ jobs:
                     "type":"section",
                     "text":{
                       "type":"mrkdwn",
-                      "text":"..."
+                      "text":"🚀 🚀 🚀"
                     }
                   }
               ]
