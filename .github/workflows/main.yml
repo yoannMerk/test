@@ -65,10 +65,20 @@ jobs:
       - name: List commits since the last tag
         run: |
           git log --pretty=format:"%h %s" $FROM_TAG_HASH..$TO_TAG_HASH > commits.txt
-          echo "Commits between tags: $(git log --pretty=format:'%h %s' $FROM_TAG_HASH..$TO_TAG_HASH)"
-          commits=$(git log --pretty=format:'%h %s' $FROM_TAG_HASH..$TO_TAG_HASH)
-          echo "$commits" 
+          echo "List of commits between tags: $(git log --pretty=format:'%h %s' $FROM_TAG_HASH..$TO_TAG_HASH)"
           echo "git log --pretty=format:'%h %s' $FROM_TAG_HASH..$TO_TAG_HASH"
 
       - name: Display commits
         run: cat commits.txt
+
+
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: $TO_TAG_HASH
+          release_name: $TO_TAG_HASH
+          body: awk '{print "* " $2}' commits.txt > release_note.txt
