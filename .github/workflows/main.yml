@@ -19,7 +19,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     # The type of runner that the job will run on
-    outouts:
+    outputs:
       tag: ${{ steps.list-tags.outputs.tag }}
     steps:
 
