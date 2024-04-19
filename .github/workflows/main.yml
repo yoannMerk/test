@@ -75,7 +75,7 @@ jobs:
       - name: Display commits
         run: cat commits.txt
 
-      
+
 
       - name: Generate JSON from commit data
         id: generate_json
@@ -91,6 +91,11 @@ jobs:
           },' $FROM_TAG_HASH..$TO_TAG_HASH | sed '$s/,$//' >> commits.json
           echo ']' >> commits.json
 
+      - name: Read JSON file
+        id: read_json
+        run: echo "::set-output name=content::$(cat commits.json)"
+
+
 
       - name: Notify commits in Slack
         uses: slackapi/slack-github-action@v1.24.0
@@ -99,7 +104,7 @@ jobs:
           payload: |
             {
               "text": "Liste des commits",
-              "blocks": $(cat commits.json)
+              "blocks": ${{ steps.read_json.outputs.content }}
             }
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_NOTIFICATIONS_TOKEN }}
