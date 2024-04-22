@@ -28,7 +28,7 @@ jobs:
         run: echo Hello, world!
 
 
-  create_tag:
+  create tag:
     needs: deploy
     runs-on: ubuntu-latest
     steps:
@@ -45,7 +45,7 @@ jobs:
           git push --tags
 
 
-  list_commits:
+  list commits:
     needs: create_tag
     runs-on: ubuntu-latest
 
