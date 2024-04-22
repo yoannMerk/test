@@ -71,7 +71,9 @@ jobs:
           SLACK=''
           for commit in $(git rev-list $FROM_TAG_HASH..$TO_TAG_HASH)
           do
-              SLACK+="{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"$commit\"}},"
+            commit_message=$(git log --format=%s -n 1 $commit)
+            commit_short_hash=$(git log --format=%h -n 1 $commit)
+            SLACK+="{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"- $commit_short_hash: $commit_message\"}},"
           done
           echo "MESSAGE=$SLACK" >> $GITHUB_OUTPUT
 
