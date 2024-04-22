@@ -73,13 +73,7 @@ jobs:
           do
               SLACK+="{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"$commit\"}},"
           done
-          echo "SLACK_MESSAGE=$SLACK" >> $GITHUB_ENV
-          echo "SLAIC MESSAGE $SLACK_MESSAGE ${SLACK}"
-      
-
-      - name: Read JSON file
-        id: read_json
-        run: echo "::set-output name=content::$SLACK_MESSAGE"
+          echo "MESSAGE=$SLACK" >> $GITHUB_OUTPUT
 
 
 
@@ -105,7 +99,7 @@ jobs:
                       "text":"_Marketplace web app_"
                     }
                   },
-                  ${{ steps.read_json.outputs.content }}
+                  ${{ steps.slack_message.outputs.MESSAGE }}
                   {
                     "type":"section",
                     "text":{
