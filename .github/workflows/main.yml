@@ -113,7 +113,7 @@ jobs:
                       "text": ${{ steps.slack_message.outputs.TEXT }}
                     }
                   },
-                  ${{ steps.slack_message.outputs.SLACK }}
+                  ${{ steps.slack_message.outputs.MESSAGES }}
                   {
                     "type":"section",
                     "text":{
