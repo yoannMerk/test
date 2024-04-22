@@ -75,7 +75,7 @@ jobs:
           sed '$s/,$//' | while IFS= read -r line; do
             NEW_VALUE="${SLACK_MESSAGE},$line"
             echo "SLACK_MESSAGE=$NEW_VALUE" 
-        
+            echo "JSUIS dans la loop"
           done
           
           echo "SLACK_MESSAGE=$SLACK_MESSAGE" >> $GITHUB_ENV
