@@ -68,24 +68,18 @@ jobs:
       - name: Generate Slack message
         id: slack_message
         run: |
-          SLACK=''
-          TEXT=''
+          SLACK_MESSAGES=''
           REPO_URL="https://github.com/yoannMerk/test"
           for commit in $(git rev-list $FROM_TAG_HASH..$TO_TAG_HASH)
           do
             commit_message=$(git log --format=%s -n 1 $commit)
             commit_short_hash=$(git log --format=%h -n 1 $commit)
             commit_link="<$REPO_URL/commit/${commit_short_hash} | ${commit_short_hash}>" 
-            SLACK+="{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"• $commit_link: $commit_message\"}},"
-            TEXT+="\"• $commit_link: $commit_message\"\n"
+            SLACK_MESSAGES+="{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"• $commit_link: $commit_message\"}},"
           done
-          commits_diff="<$REPO_URL/compare/$FROM_TAG_HASH..$TO_TAG_HASH | Diff>" 
-          SLACK+="{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"• $commits_diff\"}},"
-          TEXT+="<$REPO_URL/compare/$FROM_TAG_HASH..$TO_TAG_HASH | Full diff>"
-          echo "MESSAGES=$SLACK" >> $GITHUB_OUTPUT
-          echo "SLACK_TEXT=$TEXT" >> $GITHUB_OUTPUT
-
-
+          commits_diff="<$REPO_URL/compare/$FROM_TAG_HASH..$TO_TAG_HASH | Full diff>" 
+          SLACK_MESSAGES+="{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"• $commits_diff\"}},"
+          echo "MESSAGES=$SLACK_MESSAGES" >> $GITHUB_OUTPUT
 
       - name: Notify commits in Slack
         uses: slackapi/slack-github-action@v1.24.0
@@ -93,13 +87,13 @@ jobs:
           status: ${{ job.status }}
           payload: |
             {
-                "text":"Liste des commits",
+                "text":"",
                 "blocks":[
                   {
                     "type":"section",
                     "text":{
                       "type":"mrkdwn",
-                      "text":"*Production deployment ended*"
+                      "text":"*Production deployment completed*"
                     }
                   },
                   {
@@ -107,13 +101,6 @@ jobs:
                     "text":{
                       "type":"mrkdwn",
                       "text":"_Marketplace web app_"
-                    }
-                  },
-                  {
-                    "type":"section",
-                    "text":{
-                      "type":"mrkdwn",
-                      "text": ${{ steps.slack_message.outputs.SLACK_TEXT }}
                     }
                   },
                   ${{ steps.slack_message.outputs.MESSAGES }}
