@@ -79,7 +79,7 @@ jobs:
           echo "MESSAGES=$SLACK_MESSAGES" >> $GITHUB_OUTPUT
 
       - name: Notify commits in Slack
-        uses: slackapi/slack-github-action@v1.24.0
+        uses: slackapi/slack-github-action@v1.26.0
         with:
           status: ${{ job.status }}
           payload: |
