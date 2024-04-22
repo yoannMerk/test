@@ -107,7 +107,7 @@ jobs:
                       "text":"_Marketplace web app_"
                     }
                   },
-                  ${{ steps.read_json.outputs.content }},
+                  ${{ steps.read_json.outputs.content }}
                   {
                     "type":"section",
                     "text":{
