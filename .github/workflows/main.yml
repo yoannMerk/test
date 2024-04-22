@@ -70,17 +70,16 @@ jobs:
       - name: Generate Slack message
         id: slack_message
         run: |
-          echo "SLACK=''"
-          for commit in $(git log $FROM_TAG_HASH..$TO_TAG_HASH)
+          SLACK=''
+          for commit in $(git rev-list $FROM_TAG_HASH..$TO_TAG_HASH)
           do
-            echo $commit
-            echo 'SLACK=${SLACK},{
-                    "type":"section",
-                    "text":{
-                      "type":"mrkdwn",
-                      "text":"commit"
-                    }
-                  }'
+            SLACK+='{
+                "type":"section",
+                "text":{
+                    "type":"mrkdwn",
+                    "text": $commit
+                }
+            },'
           done
           
           echo "SLACK_MESSAGE=$SLACK" >> $GITHUB_ENV
