@@ -79,7 +79,7 @@ jobs:
           done
           commits_diff="<$REPO_URL/compare/$FROM_TAG_HASH..$TO_TAG_HASH | Diff>" 
           SLACK+="{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"- $commits_diff\"}},"
-          echo "MESSAGE=$SLACK" >> $GITHUB_OUTPUT
+          echo "$SLACK" >> $GITHUB_OUTPUT
 
 
 
