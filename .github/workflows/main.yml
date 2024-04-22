@@ -74,9 +74,11 @@ jobs:
           do
             commit_message=$(git log --format=%s -n 1 $commit)
             commit_short_hash=$(git log --format=%h -n 1 $commit)
-            commit_link="<($REPO_URL/commit/$commit_hash)|${commit_short_hash}>" 
+            commit_link="<$REPO_URL/commit/$commit_hash | ${commit_short_hash}>" 
             SLACK+="{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"- $commit_link: $commit_message\"}},"
           done
+          commits_diff="<$REPO_URL/compare/$FROM_TAG_HASH..$TO_TAG_HASH | Diff>" 
+          SLACK+="{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"- commits_diff\"}},"
           echo "MESSAGE=$SLACK" >> $GITHUB_OUTPUT
 
 
