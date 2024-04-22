@@ -74,8 +74,13 @@ jobs:
           for commit in $(git log $FROM_TAG_HASH..$TO_TAG_HASH)
           do
             echo $commit
-            NEW_VALUE="${SLACK_MESSAGE},$commit"
-            echo "SLACK_MESSAGE=$NEW_VALUE" 
+            echo 'SLACK_MESSAGE=${SLACK_MESSAGE},{
+                    "type":"section",
+                    "text":{
+                      "type":"mrkdwn",
+                      "text":"${commit}"
+                    }
+                  }'
           done
           
           echo "SLACK_MESSAGE=$SLACK_MESSAGE" >> $GITHUB_ENV
@@ -84,7 +89,7 @@ jobs:
 
       - name: Read JSON file
         id: read_json
-        run: echo "::set-output name=content::$SLACK"
+        run: echo "::set-output name=content::$SLACK_MESSAGE"
 
 
 
