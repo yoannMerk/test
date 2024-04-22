@@ -72,13 +72,10 @@ jobs:
           REPO_URL="https://github.com/yoannMerk/test"
           for commit in $(git rev-list $FROM_TAG_HASH..$TO_TAG_HASH)
           do
-            commit_message=$(git log --format=%s -n 1 $commit)
-            commit_short_hash=$(git log --format=%h -n 1 $commit)
-            commit_link="<$REPO_URL/commit/${commit_short_hash} | ${commit_short_hash}>" 
-            SLACK_MESSAGES+="{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"• $commit_link: $commit_message\"}},"
+            short_hash=$(git log --format=%h -n 1 $commit)
+            SLACK_MESSAGES+="{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"• <$REPO_URL/commit/${short_hash} | ${short_hash}>: $(git log --format=%s -n 1 $commit)\"}},"
           done
-          commits_diff="<$REPO_URL/compare/$FROM_TAG_HASH..$TO_TAG_HASH | Full diff>" 
-          SLACK_MESSAGES+="{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"• $commits_diff\"}},"
+          SLACK_MESSAGES+="{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"• <$REPO_URL/compare/$FROM_TAG_HASH..$TO_TAG_HASH | Full diff>\"}},"
           echo "MESSAGES=$SLACK_MESSAGES" >> $GITHUB_OUTPUT
 
       - name: Notify commits in Slack
