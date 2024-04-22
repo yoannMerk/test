@@ -70,15 +70,17 @@ jobs:
       - name: Generate Slack message
         id: slack_message
         run: |
-          const commits = JSON.parse(git log $FROM_TAG_HASH..$TO_TAG_HASH);
-          var lines = "## What’s Changed\n\n";
-          for (const commit of commits) {
-            lines += "- " + commit.message + " (" + commit.id + ") @" + commit.author.username + "\n"
-            echo "plop"
-          }
+          echo "SLACK=''"
+          for commit in $(git log $FROM_TAG_HASH..$TO_TAG_HASH)
+          do
+            echo $commit
+            NEW_VALUE="${SLACK_MESSAGE},$commit"
+            echo "SLACK_MESSAGE=$NEW_VALUE" 
+          done
           
-          echo "SLACK_MESSAGE=lines" >> $GITHUB_ENV
-          echo "SLAIC MESSAGE lines ${lines}"
+          echo "SLACK_MESSAGE=$SLACK_MESSAGE" >> $GITHUB_ENV
+          echo "SLAIC MESSAGE $SLACK_MESSAGE ${SLACK_MESSAGE}"
+      
 
       - name: Read JSON file
         id: read_json
