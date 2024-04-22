@@ -69,12 +69,12 @@ jobs:
         id: slack_message
         run: |
           SLACK=''
-          REPO_URL="https://github.com/workstaffhq/ui"
+          REPO_URL="https://github.com/yoannMerk/test"
           for commit in $(git rev-list $FROM_TAG_HASH..$TO_TAG_HASH)
           do
             commit_message=$(git log --format=%s -n 1 $commit)
             commit_short_hash=$(git log --format=%h -n 1 $commit)
-            commit_link="<$REPO_URL/commit/${commit_hash} | ${commit_short_hash}>" 
+            commit_link="<$REPO_URL/commit/${commit_short_hash} | ${commit_short_hash}>" 
             SLACK+="{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"- $commit_link: $commit_message\"}},"
           done
           commits_diff="<$REPO_URL/compare/$FROM_TAG_HASH..$TO_TAG_HASH | Diff>" 
