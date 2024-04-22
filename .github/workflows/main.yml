@@ -74,8 +74,8 @@ jobs:
           do
             commit_message=$(git log --format=%s -n 1 $commit)
             commit_short_hash=$(git log --format=%h -n 1 $commit)
-            commit_link="[${commit_short_hash}]($REPO_URL/commit/$commit_hash)" 
-            SLACK+="{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"* $commit_link: $commit_message\"}},"
+            commit_link="<($REPO_URL/commit/$commit_hash)|${commit_short_hash}>" 
+            SLACK+="{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"- $commit_link: $commit_message\"}},"
           done
           echo "MESSAGE=$SLACK" >> $GITHUB_OUTPUT
 
