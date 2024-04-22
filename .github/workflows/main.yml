@@ -73,15 +73,8 @@ jobs:
           SLACK=''
           for commit in $(git rev-list $FROM_TAG_HASH..$TO_TAG_HASH)
           do
-            SLACK+='{
-                "type":"section",
-                "text":{
-                    "type":"mrkdwn",
-                    "text": $commit
-                }
-            },'
+              SLACK+="{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"$commit\"}},"
           done
-          
           echo "SLACK_MESSAGE=$SLACK" >> $GITHUB_ENV
           echo "SLAIC MESSAGE $SLACK_MESSAGE ${SLACK}"
       
