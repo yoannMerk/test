@@ -69,6 +69,7 @@ jobs:
         id: slack_message
         run: |
           SLACK=''
+          TEXT=''
           REPO_URL="https://github.com/yoannMerk/test"
           for commit in $(git rev-list $FROM_TAG_HASH..$TO_TAG_HASH)
           do
@@ -76,11 +77,13 @@ jobs:
             commit_short_hash=$(git log --format=%h -n 1 $commit)
             commit_link="<$REPO_URL/commit/${commit_short_hash} | ${commit_short_hash}>" 
             SLACK+="{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"• $commit_link: $commit_message\"}},"
+            TEXT+="\"• $commit_link: $commit_message\"\n"
           done
           commits_diff="<$REPO_URL/compare/$FROM_TAG_HASH..$TO_TAG_HASH | Diff>" 
           SLACK+="{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"• $commits_diff\"}},"
+          TEXT+="<$REPO_URL/compare/$FROM_TAG_HASH..$TO_TAG_HASH | Full diff>""
           echo "MESSAGES=$SLACK" >> $GITHUB_OUTPUT
-          echo "TEXT=\"type\"" >> $GITHUB_OUTPUT
+          echo "SLACK_TEXT=$TEXT" >> $GITHUB_OUTPUT
 
 
 
@@ -110,7 +113,7 @@ jobs:
                     "type":"section",
                     "text":{
                       "type":"mrkdwn",
-                      "text": ${{ steps.slack_message.outputs.TEXT }}
+                      "text": ${{ steps.slack_message.outputs.SLACK_TEXT }}
                     }
                   },
                   ${{ steps.slack_message.outputs.MESSAGES }}
