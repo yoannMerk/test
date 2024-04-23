@@ -24,6 +24,7 @@ jobs:
    name: Create tag an send slack message
    uses: ./.github/workflows/create-tag.yml
    with:
-     tag-prefix: 'plop_test'
-     app-name: 'Mon app de test'
+     tag-prefix: "plop_test"
+     app-name: "Mon app de test"
+     repo-url: "https://github.com/yoannMerk/test"
    secrets: inherit

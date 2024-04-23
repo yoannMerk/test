@@ -10,6 +10,9 @@ on:
       tag-prefix:
         required: true
         type: string
+      repo-url:
+        required: true
+        type: string
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -19,8 +22,8 @@ jobs:
       - uses: actions/checkout@v3
       - name: Create Tag
         run: |
-          prefix=${{ inputs.tag-prefix }}
-          git tag "${prefix}_$(TZ=America/Montreal date +'%Y%m%dT%H%M')"
+          PREFIX=${{ inputs.tag-prefix }}
+          git tag "${PREFIX}_$(TZ=America/Montreal date +'%Y%m%dT%H%M')"
           git push --tags
 
 
@@ -48,7 +51,7 @@ jobs:
         id: slack_message
         run: |
           SLACK_MESSAGES=''
-          REPO_URL="https://github.com/yoannMerk/test"
+          REPO_URL=${{ inputs.repo-url }}
           for commit in $(git rev-list $FROM_TAG_HASH..$TO_TAG_HASH)
           do
             short_hash=$(git log --format=%h -n 1 $commit)
