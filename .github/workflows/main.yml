@@ -25,7 +25,7 @@ jobs:
    needs: deploy
    uses: ./.github/workflows/create-tag.yml
    with:
-     tag-prefix: "plop_test"
+     tag-prefix: "plop_test_02"
      app-name: "Mon app de test"
      repo-url: "https://github.com/yoannMerk/test"
    secrets: inherit
