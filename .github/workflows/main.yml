@@ -27,3 +27,11 @@ jobs:
      tag-prefix: 'plop_test_'
      app-name: 'Mon app de test'
    secrets: inherit
+
+
+  third_job:
+    name: Third Job
+    runs-on: ubuntu-latest
+    steps:
+      - name: Do something
+        run: echo This is the third job and it has no dependencies
