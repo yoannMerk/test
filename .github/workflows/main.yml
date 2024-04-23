@@ -21,87 +21,9 @@ jobs:
 
 
   create_tag:
-    needs: deploy
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Get hash of last commit and current date
-        run: |
-          echo "SHA=$(git rev-parse --short "$GITHUB_SHA")" >> "$GITHUB_ENV"
-          echo "DATE=$(TZ=America/Montreal date +'%Y%m%dT%H%M')" >> $GITHUB_ENV  
-
-      - name: Create Tag
-        run: |
-          git tag "mp_customer_web_$(TZ=America/Montreal date +'%Y%m%dT%H%M')"
-          git push --tags
-
-
-  list_commits:
-    needs: create_tag
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-      - name: Get commit hashes of last two tags for the current app
-        id: list-tags
-        run: |
-          git fetch --tags
-          TAGS=$(git tag --sort=-committerdate | grep '^mp_customer_web_' | head -n 2)
-          FROM_TAG=$(echo "${TAGS}" | sed -n 2p)
-          TO_TAG=$(echo "${TAGS}" | sed -n 1p)
-          echo "FROM_TAG_HASH=$(git rev-parse "${FROM_TAG}")" >> $GITHUB_ENV
-          echo "TO_TAG_HASH=$(git rev-parse "${TO_TAG}")" >> $GITHUB_ENV
-
-
-
-      - name: Generate Slack message
-        id: slack_message
-        run: |
-          SLACK_MESSAGES=''
-          REPO_URL="https://github.com/yoannMerk/test"
-          for commit in $(git rev-list $FROM_TAG_HASH..$TO_TAG_HASH)
-          do
-            short_hash=$(git log --format=%h -n 1 $commit)
-            SLACK_MESSAGES+="{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"• <$REPO_URL/commit/${short_hash} | ${short_hash}>: $(git log --format=%s -n 1 $commit)\"}},"
-          done
-          SLACK_MESSAGES+="{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"• <$REPO_URL/compare/$FROM_TAG_HASH..$TO_TAG_HASH | Full diff>\"}},"
-          echo "MESSAGES=$SLACK_MESSAGES" >> $GITHUB_OUTPUT
-
-      - name: Notify commits in Slack
-        uses: slackapi/slack-github-action@v1.26.0
-        with:
-          status: ${{ job.status }}
-          payload: |
-            {
-                "text":"",
-                "blocks":[
-                  {
-                    "type":"section",
-                    "text":{
-                      "type":"mrkdwn",
-                      "text":"*Production deployment completed* ✅"
-                    }
-                  },
-                  {
-                    "type":"section",
-                    "text":{
-                      "type":"mrkdwn",
-                      "text":"_Marketplace web app_"
-                    }
-                  },
-                  ${{ steps.slack_message.outputs.MESSAGES }}
-                  {
-                    "type":"section",
-                    "text":{
-                      "type":"mrkdwn",
-                      "text":"🚀 🚀 🚀"
-                    }
-                  }
-              ]
-            }
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_NOTIFICATIONS_TOKEN }}
-          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+   name: Create tag an send slack message
+   uses: ./.github/workflows/create-tag.yml
+   with:
+     prefix-tag: 'plop_test_'
+     app-name: 'Mon app de test'
+   secrets: inherit
