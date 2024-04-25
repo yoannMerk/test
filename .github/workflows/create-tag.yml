@@ -24,10 +24,10 @@ jobs:
         run: |
           last_tag=$(git describe --tags --abbrev=0 "${{ inputs.tag-prefix }}*" 2>/dev/null || echo "")
           if [ -n "$last_tag" ]; then
-            if ! git log --oneline $last_tag..HEAD >/dev/null 2>&1; then
-              echo "::error::No new commits found between $last_tag and HEAD. Aborting tag creation."
-              exit 1
-            fi
+           if git log --oneline $last_tag..HEAD >/dev/null 2>&1; then
+             echo "::error::New commits found between $last_tag and HEAD. Aborting tag creation."
+             exit 1
+           fi
           fi
       - name: Create Tag
         run: |
