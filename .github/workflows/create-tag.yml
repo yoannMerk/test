@@ -92,7 +92,7 @@ jobs:
                     "type":"section",
                     "text":{
                       "type":"mrkdwn",
-                      "text":"🚀 🚀 🚀"
+                      "text":"🚀 🚀 🚀 Deployed by ${{ github.actor }} 🚀 🚀 🚀"
                     }
                   }
               ]
