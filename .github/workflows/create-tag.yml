@@ -20,6 +20,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - name: Check if tag exists
+        run: |
+          last_tag=$(git describe --tags --abbrev=0 "${{ inputs.tag-prefix }}*" 2>/dev/null || echo "")
+          if [ -n "$last_tag" ]; then
+            if ! git log --oneline $last_tag..HEAD >/dev/null 2>&1; then
+              echo "::error::No new commits found between $last_tag and HEAD. Aborting tag creation."
+              exit 1
+            fi
+          fi
       - name: Create Tag
         run: |
           git tag "${{ inputs.tag-prefix }}_$(TZ=America/Montreal date +'%Y%m%dT%H%M')"
