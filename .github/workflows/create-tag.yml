@@ -116,7 +116,7 @@ jobs:
                     "type":"section",
                     "text":{
                       "type":"mrkdwn",
-                      "text":"*Production deployment completed* ✅"
+                      "text":"*Production deployment completed* ✅ !"
                     }
                   },
                   {
