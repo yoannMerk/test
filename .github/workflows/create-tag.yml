@@ -22,7 +22,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Get Tag
+      - name: Get last tag
         run: |  
           git fetch --tags
           FROM_TAG=$(echo "$(git tag --sort=-committerdate | grep '^${{ inputs.tag-prefix }}' | head -n 2)" | sed -n 1p)
@@ -35,7 +35,7 @@ jobs:
           REPO_URL=${{ inputs.repo-url }}
           SLACK_MESSAGE+="<$REPO_URL/compare/$FROM_TAG_HASH..${latest_commit}| Full diff>"
           echo "MESSAGE=$SLACK_MESSAGE" >> $GITHUB_OUTPUT
-      - name: Notify the start of deployment
+      - name: Notify start of deployment
         uses: slackapi/slack-github-action@v1.26.0
         with:
           payload: |
