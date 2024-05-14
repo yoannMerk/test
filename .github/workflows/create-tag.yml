@@ -74,9 +74,10 @@ jobs:
     needs: send_start_message
     runs-on: ubuntu-latest
     steps:
-      - name: Create Tag
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+      - name: Create Tag
         run: |
           git tag "${{ inputs.tag-prefix }}_$(TZ=America/Montreal date +'%Y%m%dT%H%M')"
           git push --tags
