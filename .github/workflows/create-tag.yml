@@ -81,7 +81,7 @@ jobs:
         run: |
           LAST_TAG="${{ inputs.tag-prefix }}_$(TZ=America/Montreal date +'%Y%m%dT%H%M')"
           git tag "$LAST_TAG"
-          echo "TO_TAG_HASH=$(git rev-parse "${{ LAST_TAG }}")" >> $GITHUB_ENV
+          echo "TO_TAG_HASH=$(git rev-parse $LAST_TAG)" >> $GITHUB_ENV
           git push --tags
 
 
@@ -90,15 +90,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: Get commit hashes of last two tags for the current app
-        run: |
-          echo "TO_TAG_HASH=$(git rev-parse $(echo $TAGS | sed -n 1p))" >> $GITHUB_ENV
-
-
-
       - name: Generate Slack message
         id: slack_message
         run: |
