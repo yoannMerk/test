@@ -25,8 +25,7 @@ jobs:
       - name: Get Tag
         run: |  
           git fetch --tags
-          ALL_TAGS=$(git tag --sort=-committerdate | grep '^${{ inputs.tag-prefix }}' | head -n 2)
-          FROM_TAG=$(echo "${ALL_TAGS}" | sed -n 1p)
+          FROM_TAG=$(echo "$(git tag --sort=-committerdate | grep '^${{ inputs.tag-prefix }}' | head -n 2)" | sed -n 1p)
           echo "FROM_TAG_HASH=$(git rev-parse "${FROM_TAG}")" >> $GITHUB_ENV
       - name: Generate Slack message
         id: slack_start_message
@@ -34,9 +33,9 @@ jobs:
           latest_commit=$(git rev-parse HEAD)
           SLACK_MESSAGE=''
           REPO_URL=${{ inputs.repo-url }}
-          SLACK_MESSAGE+="• <$REPO_URL/compare/$FROM_TAG_HASH..${latest_commit}| Full diff>"
+          SLACK_MESSAGE+="<$REPO_URL/compare/$FROM_TAG_HASH..${latest_commit}| Full diff>"
           echo "MESSAGE=$SLACK_MESSAGE" >> $GITHUB_OUTPUT
-          
+      
 
       - name: Notify the start of deployment
         uses: slackapi/slack-github-action@v1.26.0
