@@ -98,7 +98,7 @@ jobs:
           SLACK_MESSAGES=''
           REPO_URL=${{ inputs.repo-url }}
           FROM=${{ steps.get_tag.outputs.FROM_TAG_HASH }} 
-          TO=${{ $steps.create_tag.outputs.TO_TAG_HASH }}
+          TO=${{ steps.create_tag.outputs.TO_TAG_HASH }}
           for commit in $(git rev-list $FROM..$TO)
           do
             short_hash=$(git log --format=%h -n 1 $commit)
