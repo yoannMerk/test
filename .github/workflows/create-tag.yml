@@ -35,7 +35,7 @@ jobs:
           latest_commit=$(git rev-parse HEAD)
           SLACK_MESSAGE=''
           REPO_URL=${{ inputs.repo-url }}
-          SLACK_MESSAGE+="• <$REPO_URL/compare/$FROM_TAG_HASH..$latest_commit| Full diff>"
+          SLACK_MESSAGE+="• <$REPO_URL/compare/$FROM_TAG_HASH..${latest_commit}| Full diff>"
           echo "MESSAGE=$SLACK_START_MESSAGE" >> $GITHUB_OUTPUT
 
       - name: Notify the start of deployment
@@ -56,7 +56,7 @@ jobs:
                     "type": "section",
                     "text": {
                       "type": "mrkdwn",
-                      "text": "test"
+                      "text": "${{ steps.slack_start_message.outputs.MESSAGE }}"
                     }
                   }
               ]
