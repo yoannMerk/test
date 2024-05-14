@@ -28,8 +28,7 @@ jobs:
           git fetch --tags
           ALL_TAGS=$(git tag --sort=-committerdate | grep '^${{ inputs.tag-prefix }}' | head -n 1)
           FROM_TAG=$(echo "${ALL_TAGS}" | sed -n 1p)
-          echo "FROM_TAG_HASH=$(git rev-parse "${FROM_TAG}")" >> $GITHUB_ENV
-          echo "FROM_TAG_HASH=$FROM_TAG_HASH" >> $GITHUB_OUTPUT
+          echo "FROM_TAG_HASH=$(git rev-parse "${FROM_TAG}")" >> $GITHUB_OUTPUT
       - name: Generate Slack message
         id: slack_start_message
         run: |
@@ -84,8 +83,7 @@ jobs:
         run: |
           LAST_TAG="${{ inputs.tag-prefix }}_$(TZ=America/Montreal date +'%Y%m%dT%H%M')"
           git tag "$LAST_TAG"
-          echo "TO_TAG_HASH=$(git rev-parse $LAST_TAG)" >> $GITHUB_ENV
-          echo "TO_TAG_HASH" >> $GITHUB_OUTPUT
+          echo "TO_TAG_HASH=$(git rev-parse $LAST_TAG)" >> $GITHUB_OUTPUT
           git push --tags
 
 
