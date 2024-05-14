@@ -104,7 +104,7 @@ jobs:
             short_hash=$(git log --format=%h -n 1 $commit)
             SLACK_MESSAGES+="• <$REPO_URL/commit/${short_hash} | ${short_hash}>: $(git log --format=%s -n 1 $commit)\n"
           done
-          SLACK_MESSAGES+="• <$REPO_URL/compare/$FROM..$TO | Full diff>"
+          SLACK_MESSAGES+="• <$REPO_URL/compare/${{ steps.get_tag.outputs.FROM_TAG_HASH }}..${{ steps.create_tag.outputs.TO_TAG_HASH }} | Full diff>"
           echo "MESSAGES=$SLACK_MESSAGES" >> $GITHUB_OUTPUT
 
       - name: Notify commits in Slack
