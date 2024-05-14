@@ -25,10 +25,10 @@ jobs:
       - name: Get Tag
         run: |  
           git fetch --tags
-          TAGS=$(git tag --sort=-committerdate | grep '^${{ inputs.tag-prefix }}' | head -n 2)
-          FROM_TAG=$(echo "${TAGS}" | sed -n 2p)
+          ALL_TAGS=$(git tag --sort=-committerdate | grep '^${{ inputs.tag-prefix }}' | head -n 1)
+          FROM_TAG=$(echo "${ALL_TAGS}" | sed -n 1p)
           echo "FROM_TAG_HASH=$(git rev-parse "${FROM_TAG}")" >> $GITHUB_ENV
-          echo "TAGS=TAGS" >> $GITHUB_ENV
+          echo "TAGS=ALL_TAGS" >> $GITHUB_ENV
       - name: Generate Slack message
         id: slack_start_message
         run: |
