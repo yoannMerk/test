@@ -19,6 +19,9 @@ jobs:
   send_start_message:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - name: Get Tag
         run: |  
           git fetch --tags
