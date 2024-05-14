@@ -35,8 +35,6 @@ jobs:
           REPO_URL=${{ inputs.repo-url }}
           SLACK_MESSAGE+="<$REPO_URL/compare/$FROM_TAG_HASH..${latest_commit}| Full diff>"
           echo "MESSAGE=$SLACK_MESSAGE" >> $GITHUB_OUTPUT
-      
-
       - name: Notify the start of deployment
         uses: slackapi/slack-github-action@v1.26.0
         with:
