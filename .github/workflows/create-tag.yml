@@ -35,7 +35,7 @@ jobs:
           latest_commit=$(git rev-parse HEAD)
           SLACK_MESSAGE=''
           REPO_URL=${{ inputs.repo-url }}
-          SLACK_MESSAGE+="• <$REPO_URL/compare/$FROM_TAG_HASH..${latest_commit}| Full diff>"
+          SLACK_MESSAGE+="• <$REPO_URL/compare/${{ steps.get_tag.outputs.FROM_TAG_HASH }}..${latest_commit}| Full diff>"
           echo "MESSAGE=$SLACK_MESSAGE" >> $GITHUB_OUTPUT
           
 
@@ -97,8 +97,8 @@ jobs:
         run: |
           SLACK_MESSAGES=''
           REPO_URL=${{ inputs.repo-url }}
-          FROM=${{ steps.get_tag.outputs.FROM_TAG_HASH }} 
-          TO=${{ steps.create_tag.outputs.TO_TAG_HASH }}
+          FROM=$steps.get_tag.outputs.FROM_TAG_HASH
+          TO=$steps.create_tag.outputs.TO_TAG_HASH
           for commit in $(git rev-list $FROM..$TO)
           do
             short_hash=$(git log --format=%h -n 1 $commit)
