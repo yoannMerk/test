@@ -1,0 +1,111 @@
+name: Create tag and send slack message
+
+# Controls when the workflow will run
+on:
+  workflow_call:
+    inputs:
+      app-name:
+        required: true
+        type: string
+      tag-prefix:
+        required: true
+        type: string
+      repo-url:
+        required: true
+        type: string
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  create_tag:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check if tag exists
+        run: |
+          last_tag=$(git describe --tags --abbrev=0 "${{ inputs.tag-prefix }}*" 2>/dev/null || echo "")
+          if [ -n "$last_tag" ]; then
+           if git log --oneline $last_tag..HEAD >/dev/null 2>&1; then
+             echo "Doen't create a tag on"
+             exit 0
+           fi
+          fi
+      - name: Create Tag
+        run: |
+          git tag "${{ inputs.tag-prefix }}_$(TZ=America/Montreal date +'%Y%m%dT%H%M')"
+          git push --tags
+
+
+  send_message:
+    needs: create_tag
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Get commit hashes of last two tags for the current app
+        id: list-tags
+        run: |
+          git fetch --tags
+          TAGS=$(git tag --sort=-committerdate | grep '^${{ inputs.tag-prefix }}' | head -n 2)
+          FROM_TAG=$(echo "${TAGS}" | sed -n 2p)
+          TO_TAG=$(echo "${TAGS}" | sed -n 1p)
+          echo "FROM_TAG_HASH=$(git rev-parse "${FROM_TAG}")" >> $GITHUB_ENV
+          echo "TO_TAG_HASH=$(git rev-parse "${TO_TAG}")" >> $GITHUB_ENV
+
+
+
+      - name: Generate Slack message
+        id: slack_message
+        run: |
+          SLACK_MESSAGES=''
+          REPO_URL=${{ inputs.repo-url }}
+          for commit in $(git rev-list $FROM_TAG_HASH..$TO_TAG_HASH)
+          do
+            short_hash=$(git log --format=%h -n 1 $commit)
+            SLACK_MESSAGES+="• <$REPO_URL/commit/${short_hash} | ${short_hash}>: $(git log --format=%s -n 1 $commit)\n"
+          done
+          SLACK_MESSAGES+="• <$REPO_URL/compare/$FROM_TAG_HASH..$TO_TAG_HASH | Full diff>"
+          echo "MESSAGES=$SLACK_MESSAGES" >> $GITHUB_OUTPUT
+
+      - name: Notify commits in Slack
+        uses: slackapi/slack-github-action@v1.26.0
+        with:
+          status: ${{ job.status }}
+          payload: |
+            {
+                "text":"",
+                "blocks":[
+                  {
+                    "type":"section",
+                    "text":{
+                      "type":"mrkdwn",
+                      "text":"*Production deployment completed* ✅"
+                    }
+                  },
+                  {
+                    "type":"section",
+                    "text":{
+                      "type":"mrkdwn",
+                      "text":"_${{ inputs.app-name }}_"
+                    }
+                  },
+                  {
+                    "type": "section",
+                    "text": {
+                      "type": "mrkdwn",
+                      "text": "${{ steps.slack_message.outputs.MESSAGES }}"
+                    }
+                  },
+                  {
+                    "type":"section",
+                    "text":{
+                      "type":"mrkdwn",
+                      "text":"🚀 Deployed by ${{ github.actor }} 🚀"
+                    }
+                  }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_NOTIFICATIONS_TOKEN }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK

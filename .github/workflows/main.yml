@@ -1,0 +1,31 @@
+name: MON WF
+
+# Controls when the workflow will run
+on: workflow_dispatch
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  deploy:
+    runs-on: ubuntu-latest
+    # The type of runner that the job will run on
+    steps:
+
+      # Steps represent a sequence of tasks that will be executed as part of the job
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v3
+
+      # Runs a single command using the runners shell
+      - name: Run a one-line script
+        run: echo Hello, world!
+
+
+  create_tag:
+   name: Create tag an send slack message
+   needs: deploy
+   uses: ./.github/workflows/create-tag.yml
+   with:
+     tag-prefix: "plop_test_02"
+     app-name: "Mon app de test"
+     repo-url: "https://github.com/yoannMerk/test"
+   secrets: inherit
