@@ -23,12 +23,13 @@ jobs:
         with:
           fetch-depth: 0
       - name: Get Tag
+        id: get_tag
         run: |  
           git fetch --tags
           ALL_TAGS=$(git tag --sort=-committerdate | grep '^${{ inputs.tag-prefix }}' | head -n 1)
           FROM_TAG=$(echo "${ALL_TAGS}" | sed -n 1p)
           echo "FROM_TAG_HASH=$(git rev-parse "${FROM_TAG}")" >> $GITHUB_ENV
-          echo "TAGS=ALL_TAGS" >> $GITHUB_ENV
+          echo "FROM_TAG_HASH=$FROM_TAG_HASH" >> $GITHUB_OUTPUT
       - name: Generate Slack message
         id: slack_start_message
         run: |
@@ -37,6 +38,7 @@ jobs:
           REPO_URL=${{ inputs.repo-url }}
           SLACK_MESSAGE+="• <$REPO_URL/compare/$FROM_TAG_HASH..${latest_commit}| Full diff>"
           echo "MESSAGE=$SLACK_MESSAGE" >> $GITHUB_OUTPUT
+          
 
       - name: Notify the start of deployment
         uses: slackapi/slack-github-action@v1.26.0
@@ -78,10 +80,12 @@ jobs:
         with:
           fetch-depth: 0
       - name: Create Tag
+        id: create_tag
         run: |
           LAST_TAG="${{ inputs.tag-prefix }}_$(TZ=America/Montreal date +'%Y%m%dT%H%M')"
           git tag "$LAST_TAG"
           echo "TO_TAG_HASH=$(git rev-parse $LAST_TAG)" >> $GITHUB_ENV
+          echo "TO_TAG_HASH" >> $GITHUB_OUTPUT
           git push --tags
 
 
@@ -95,12 +99,14 @@ jobs:
         run: |
           SLACK_MESSAGES=''
           REPO_URL=${{ inputs.repo-url }}
-          for commit in $(git rev-list $FROM_TAG_HASH..$TO_TAG_HASH)
+          FROM=${{ steps.get_tag.outputs.FROM_TAG_HASH }}
+          TO=${{ steps.create_tag.outputs.TO_TAG_HASH }}
+          for commit in $(git rev-list $FROM..$TO)
           do
             short_hash=$(git log --format=%h -n 1 $commit)
             SLACK_MESSAGES+="• <$REPO_URL/commit/${short_hash} | ${short_hash}>: $(git log --format=%s -n 1 $commit)\n"
           done
-          SLACK_MESSAGES+="• <$REPO_URL/compare/$FROM_TAG_HASH..$TO_TAG_HASH | Full diff>"
+          SLACK_MESSAGES+="• <$REPO_URL/compare/$FROM..$TO | Full diff>"
           echo "MESSAGES=$SLACK_MESSAGES" >> $GITHUB_OUTPUT
 
       - name: Notify commits in Slack
