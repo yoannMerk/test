@@ -60,14 +60,18 @@ jobs:
                     }
                   }
               ]
-            }    
-          
-  
-          
-  
-  
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_NOTIFICATIONS_TOKEN }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+
+
+
+
+
 
   create_tag:
+    needs: send_start_message
     runs-on: ubuntu-latest
     steps:
       - name: Create Tag
