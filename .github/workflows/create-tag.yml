@@ -75,6 +75,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Create Tag
+        with:
+          fetch-depth: 0
         run: |
           git tag "${{ inputs.tag-prefix }}_$(TZ=America/Montreal date +'%Y%m%dT%H%M')"
           git push --tags
