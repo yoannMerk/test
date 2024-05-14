@@ -49,7 +49,7 @@ jobs:
                     "type":"section",
                     "text":{
                       "type":"mrkdwn",
-                      "text":"*Production deployment started*"
+                      "text":"*Production deployment of ${{ inputs.app-name }} started*"
                     }
                   },
                   {
@@ -89,10 +89,8 @@ jobs:
         with:
           fetch-depth: 0
       - name: Get commit hashes of last two tags for the current app
-        id: list-tags
         run: |
-          TO_TAG=$(echo "$TAGS" | sed -n 1p)
-          echo "TO_TAG_HASH=$(git rev-parse "${TO_TAG}")" >> $GITHUB_ENV
+          echo "TO_TAG_HASH=$(git rev-parse $(echo $TAGS | sed -n 1p))" >> $GITHUB_ENV
 
 
 
