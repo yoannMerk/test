@@ -56,7 +56,7 @@ jobs:
                     "type": "section",
                     "text": {
                       "type": "mrkdwn",
-                      "text": "${{ steps.slack_start_message.outputs.MESSAGE }}"
+                      "text": "test"
                     }
                   }
               ]
