@@ -83,7 +83,7 @@ jobs:
         run: |
           LAST_TAG="${{ inputs.tag-prefix }}_$(TZ=America/Montreal date +'%Y%m%dT%H%M')"
           git tag "$LAST_TAG"
-          echo "TO_TAG_HASH=$(git rev-parse $LAST_TAG)" >> $GITHUB_OUTPUT
+          echo "TO_TAG_HASH=$(git rev-parse "${$LAST_TAG}")" >> $GITHUB_OUTPUT
           git push --tags
 
 
@@ -97,12 +97,12 @@ jobs:
         run: |
           SLACK_MESSAGES=''
           REPO_URL=${{ inputs.repo-url }}
-          for commit in $(git rev-list ${{ steps.get_tag.outputs.FROM_TAG_HASH }}..${steps.create_tag.outputs.TO_TAG_HASH})
+          for commit in $(git rev-list ${{ steps.get_tag.outputs.FROM_TAG_HASH }}..${{steps.create_tag.outputs.TO_TAG_HASH}})
           do
             short_hash=$(git log --format=%h -n 1 $commit)
             SLACK_MESSAGES+="• <$REPO_URL/commit/${short_hash} | ${short_hash}>: $(git log --format=%s -n 1 $commit)\n"
           done
-          SLACK_MESSAGES+="• <$REPO_URL/compare/${{ steps.get_tag.outputs.FROM_TAG_HASH }}..${steps.create_tag.outputs.TO_TAG_HASH} | See diff>"
+          SLACK_MESSAGES+="• <$REPO_URL/compare/${{ steps.get_tag.outputs.FROM_TAG_HASH }}..${{steps.create_tag.outputs.TO_TAG_HASH}} | See diff>"
           echo "MESSAGES=$SLACK_MESSAGES" >> $GITHUB_OUTPUT
           
 
