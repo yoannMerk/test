@@ -49,7 +49,7 @@ jobs:
                     "type":"section",
                     "text":{
                       "type":"mrkdwn",
-                      "text":"*Production deployment if ${{ inputs.app-name }} started* 🚀"
+                      "text":"*Production deployment started*"
                     }
                   },
                   {
