@@ -26,7 +26,7 @@ jobs:
         id: get_tag
         run: |  
           git fetch --tags
-          ALL_TAGS=$(git tag --sort=-committerdate | grep '^${{ inputs.tag-prefix }}' | head -n 1)
+          ALL_TAGS=$(git tag --sort=-committerdate | grep '^${{ inputs.tag-prefix }}' | head -n 2)
           FROM_TAG=$(echo "${ALL_TAGS}" | sed -n 1p)
           echo "FROM_TAG_HASH=$(git rev-parse "${FROM_TAG}")" >> $GITHUB_OUTPUT
       - name: Generate Slack message
@@ -97,8 +97,8 @@ jobs:
         run: |
           SLACK_MESSAGES=''
           REPO_URL=${{ inputs.repo-url }}
-          FROM=$steps.get_tag.outputs.FROM_TAG_HASH
-          TO=$steps.create_tag.outputs.TO_TAG_HASH
+          FROM=${{ steps.get_tag.outputs.FROM_TAG_HASH }} 
+          TO=${{ $steps.create_tag.outputs.TO_TAG_HASH }}
           for commit in $(git rev-list $FROM..$TO)
           do
             short_hash=$(git log --format=%h -n 1 $commit)
