@@ -79,7 +79,9 @@ jobs:
           fetch-depth: 0
       - name: Create Tag
         run: |
-          git tag "${{ inputs.tag-prefix }}_$(TZ=America/Montreal date +'%Y%m%dT%H%M')"
+          LAST_TAG="${{ inputs.tag-prefix }}_$(TZ=America/Montreal date +'%Y%m%dT%H%M')"
+          git tag "$LAST_TAG"
+          echo "TO_TAG_HASH=$(git rev-parse "${{ LAST_TAG }}")" >> $GITHUB_ENV
           git push --tags
 
 
