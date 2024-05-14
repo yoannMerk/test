@@ -23,19 +23,18 @@ jobs:
         with:
           fetch-depth: 0
       - name: Get Tag
-        id: get_tag
         run: |  
           git fetch --tags
           ALL_TAGS=$(git tag --sort=-committerdate | grep '^${{ inputs.tag-prefix }}' | head -n 2)
           FROM_TAG=$(echo "${ALL_TAGS}" | sed -n 1p)
-          echo "FROM_TAG_HASH=$(git rev-parse "${FROM_TAG}")" >> $GITHUB_OUTPUT
+          echo "FROM_TAG_HASH=$(git rev-parse "${FROM_TAG}")" >> $GITHUB_ENV
       - name: Generate Slack message
         id: slack_start_message
         run: |
           latest_commit=$(git rev-parse HEAD)
           SLACK_MESSAGE=''
           REPO_URL=${{ inputs.repo-url }}
-          SLACK_MESSAGE+="• <$REPO_URL/compare/${{ steps.get_tag.outputs.FROM_TAG_HASH }}..${latest_commit}| Full diff>"
+          SLACK_MESSAGE+="• <$REPO_URL/compare/$FROM_TAG_HASH..${latest_commit}| Full diff>"
           echo "MESSAGE=$SLACK_MESSAGE" >> $GITHUB_OUTPUT
           
 
@@ -91,18 +90,31 @@ jobs:
     needs: create_tag
     runs-on: ubuntu-latest
 
+
     steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Get hashes of last two tags for the current app
+        run: |
+          git fetch --tags
+          TAGS=$(git tag --sort=-committerdate | grep '^${{ inputs.tag-prefix }}' | head -n 2)
+          FROM_TAG=$(echo "${TAGS}" | sed -n 2p)
+          TO_TAG=$(echo "${TAGS}" | sed -n 1p)
+          echo "FROM_TAG_HASH=$(git rev-parse "${FROM_TAG}")" >> $GITHUB_ENV
+          echo "TO_TAG_HASH=$(git rev-parse "${TO_TAG}")" >> $GITHUB_ENV
+
       - name: Generate Slack message
         id: slack_message
         run: |
           SLACK_MESSAGES=''
           REPO_URL=${{ inputs.repo-url }}
-          for commit in $(git rev-list ${{ needs.get_tag.outputs.FROM_TAG_HASH }}..${{steps.create_tag.outputs.TO_TAG_HASH}})
+          for commit in $(git rev-list $FROM_TAG_HASH..$TO_TAG_HASH)
           do
             short_hash=$(git log --format=%h -n 1 $commit)
             SLACK_MESSAGES+="• <$REPO_URL/commit/${short_hash} | ${short_hash}>: $(git log --format=%s -n 1 $commit)\n"
           done
-          SLACK_MESSAGES+="• <$REPO_URL/compare/${{ needs.get_tag.outputs.FROM_TAG_HASH }}..${{steps.create_tag.outputs.TO_TAG_HASH}} | See diff>"
+          SLACK_MESSAGE+="• <$REPO_URL/compare/$FROM_TAG_HASH..$TO_TAG_HASH | See full diff>"
           echo "MESSAGES=$SLACK_MESSAGES" >> $GITHUB_OUTPUT
           
 
