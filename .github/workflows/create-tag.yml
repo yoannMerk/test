@@ -31,29 +31,22 @@ jobs:
           status: ${{ job.status }}
           payload: |
             {
-                "text":"",
-                "blocks":[
-                  {
-                    "type":"section",
-                    "text":{
-                      "type":"mrkdwn",
-                      "text":"*Production deployment completed* ✅"
-                    }
-                  },
-                  {
-                    "type":"section",
-                    "text":{
-                      "type":"mrkdwn",
-                      "text":"_${{ inputs.app-name }}_"
-                    }
-                  },
-                  {
-                    "type":"section",
-                    "text":{
-                      "type":"mrkdwn",
-                      "text":"🚀  Deployed by ${{ github.actor }}  🚀"
-                    }
+              "text":"",
+              "blocks":[
+                {
+                  "type":"section",
+                  "text":{
+                    "type":"mrkdwn",
+                    "text":"*Production deployment of _${{ inputs.app-name }}_ is completed* ✅"
                   }
+                },
+                {
+                  "type":"section",
+                  "text":{
+                    "type":"mrkdwn",
+                    "text":"🚀  Deployed by ${{ github.actor }}  🚀"
+                  }
+                }
               ]
             }
         env:
