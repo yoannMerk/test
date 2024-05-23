@@ -10,6 +10,7 @@ jobs:
     uses: ./.github/workflows/notifiy.yml
     with:
       app-name: "Mon app de test"
+      tag-prefix: "plop_test_02"
       repo-url: "https://github.com/yoannMerk/test"
     secrets: inherit
   # This workflow contains a single job called "build"

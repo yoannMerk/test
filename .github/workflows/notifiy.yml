@@ -5,6 +5,9 @@ on:
       app-name:
         required: true
         type: string
+      tag-prefix:
+        required: true
+        type: string
       repo-url:
         required: true
         type: string
@@ -14,12 +17,21 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Get last tag
+        run: |
+          git fetch --tags
+          FROM_TAG=$(echo "$(git tag --sort=-committerdate | grep '^${{ inputs.tag-prefix }}' | head -n 2)" | sed -n 1p)
+          echo "FROM_TAG_HASH=$(git rev-parse "${FROM_TAG}")" >> $GITHUB_ENV
       - name: Generate Slack message
         id: slack_message
         run: |
+          latest_commit=$(git rev-parse HEAD)
           SLACK_MESSAGE=''
           REPO_URL=${{ inputs.repo-url }}
-          for commit in $(git rev-list $FROM_TAG_HASH..$TO_TAG_HASH)
+          for commit in $(git rev-list $FROM_TAG_HASH..${latest_commit})
           do
             short_hash=$(git log --format=%h -n 1 $commit)
             commit_message=$(git log --format=%s -n 1 $commit | sed "s/\"/'/g")
