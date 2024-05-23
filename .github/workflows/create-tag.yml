@@ -1,6 +1,4 @@
-name: Create tag and send slack message
-
-# Controls when the workflow will run
+name: Create a tag and notify
 on:
   workflow_call:
     inputs:
@@ -10,74 +8,16 @@ on:
       tag-prefix:
         required: true
         type: string
-      repo-url:
-        required: true
-        type: string
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  send_start_message:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: Get last tag
-        run: |  
-          git fetch --tags
-          FROM_TAG=$(echo "$(git tag --sort=-committerdate | grep '^${{ inputs.tag-prefix }}' | head -n 2)" | sed -n 1p)
-          echo "FROM_TAG_HASH=$(git rev-parse "${FROM_TAG}")" >> $GITHUB_ENV
-      - name: Generate Slack message
-        id: slack_start_message
-        run: |
-          latest_commit=$(git rev-parse HEAD)
-          SLACK_MESSAGE="<${{ inputs.repo-url }}/compare/$FROM_TAG_HASH..${latest_commit}| Full diff>"
-          echo "MESSAGE=$SLACK_MESSAGE" >> $GITHUB_OUTPUT
-      - name: Notify start of deployment
-        uses: slackapi/slack-github-action@v1.26.0
-        with:
-          payload: |
-            {
-                "text":"",
-                "blocks":[
-                  {
-                    "type":"section",
-                    "text":{
-                      "type":"mrkdwn",
-                      "text":"*Production deployment of ${{ inputs.app-name }} started* 🚀"
-                    }
-                  },
-                  {
-                    "type": "section",
-                    "text": {
-                      "type": "mrkdwn",
-                      "text": "${{ steps.slack_start_message.outputs.MESSAGE }}"
-                    }
-                  }
-              ]
-            }
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_NOTIFICATIONS_TOKEN }}
-          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
-
-
-
-
-
-
   create_tag:
     needs: send_start_message
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
       - name: Create Tag
-        id: create_tag
         run: |
-          LAST_TAG="${{ inputs.tag-prefix }}_$(TZ=America/Montreal date +'%Y%m%dT%H%M')"
-          git tag "$LAST_TAG"
-          echo "TO_TAG_HASH=$(git rev-parse "${$LAST_TAG}")" >> $GITHUB_OUTPUT
+          git tag "${{ inputs.tag-prefix }}_$(TZ=America/Montreal date +'%Y%m%dT%H%M')"
           git push --tags
 
 
@@ -85,38 +25,11 @@ jobs:
     needs: create_tag
     runs-on: ubuntu-latest
 
-
     steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-      - name: Get hashes of last two tags for the current app
-        run: |
-          git fetch --tags
-          TAGS=$(git tag --sort=-committerdate | grep '^${{ inputs.tag-prefix }}' | head -n 2)
-          FROM_TAG=$(echo "${TAGS}" | sed -n 2p)
-          TO_TAG=$(echo "${TAGS}" | sed -n 1p)
-          echo "FROM_TAG_HASH=$(git rev-parse "${FROM_TAG}")" >> $GITHUB_ENV
-          echo "TO_TAG_HASH=$(git rev-parse "${TO_TAG}")" >> $GITHUB_ENV
-
-      - name: Generate Slack message
-        id: slack_message
-        run: |
-          SLACK_MESSAGES=''
-          REPO_URL=${{ inputs.repo-url }}
-          for commit in $(git rev-list $FROM_TAG_HASH..$TO_TAG_HASH)
-          do
-            short_hash=$(git log --format=%h -n 1 $commit)
-            commit_message=$(git log --format=%s -n 1 $commit | sed "s/\"/'/g")
-            SLACK_MESSAGES+="• <$REPO_URL/commit/${short_hash} | ${short_hash}>: ${commit_message}\n"
-          done
-          SLACK_MESSAGE+="• <$REPO_URL/compare/$FROM_TAG_HASH..$TO_TAG_HASH | See full diff>"
-          echo "MESSAGES=$SLACK_MESSAGES" >> $GITHUB_OUTPUT
-          
-
-      - name: Notify commits in Slack
+      - name: Notify in Slack
         uses: slackapi/slack-github-action@v1.26.0
         with:
+          status: ${{ job.status }}
           payload: |
             {
                 "text":"",
@@ -125,7 +38,7 @@ jobs:
                     "type":"section",
                     "text":{
                       "type":"mrkdwn",
-                      "text":"*Production deployment completed* ✅ !"
+                      "text":"*Production deployment completed* ✅"
                     }
                   },
                   {
@@ -136,17 +49,10 @@ jobs:
                     }
                   },
                   {
-                    "type": "section",
-                    "text": {
-                      "type": "mrkdwn",
-                      "text": "${{ steps.slack_message.outputs.MESSAGES }}"
-                    }
-                  },
-                  {
                     "type":"section",
                     "text":{
                       "type":"mrkdwn",
-                      "text":"🚀 Deployed by ${{ github.actor }} 🚀"
+                      "text":"🚀  Deployed by ${{ github.actor }}  🚀"
                     }
                   }
               ]

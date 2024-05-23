@@ -5,6 +5,13 @@ on: workflow_dispatch
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
+  notify_start_of_deployment:
+    name: Notify about the start of deployment
+    uses: ./.github/workflows/notify.yml
+    with:
+      app-name: "Mon app de test"
+      repo-url: "https://github.com/yoannMerk/test"
+    secrets: inherit
   # This workflow contains a single job called "build"
   deploy:
     runs-on: ubuntu-latest
@@ -27,5 +34,4 @@ jobs:
    with:
      tag-prefix: "plop_test_02"
      app-name: "Mon app de test"
-     repo-url: "https://github.com/yoannMerk/test"
    secrets: inherit
