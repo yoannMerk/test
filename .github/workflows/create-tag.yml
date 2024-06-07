@@ -21,12 +21,11 @@ jobs:
           
 
   fail:
+    runs-on: ubuntu-latest
     steps:
-      - name: Notify Slack on failure
-        if: failure()
-        uses: slackapi/slack-github-action@v1.26.0
-        with:
-          payload: |
+      - name: Notify in Slack
+      - uses: slackapi/slack-github-action@v1.26.0
+        payload: |
             {
                 "text":"",
                 "blocks":[
