@@ -29,7 +29,7 @@ jobs:
   create_tag:
    name: Create tag an send slack message
    needs: deploy
-   uses: ./.github/workflows/create-tag.yml
+   uses: .github/workflows/create-tag.yml
    with:
      tag-prefix: "plop_test_02"
      app-name: "Mon app de test"
