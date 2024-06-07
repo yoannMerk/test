@@ -39,7 +39,7 @@ jobs:
 
   create_tag:
     runs-on: ubuntu-latest
-    if: always() && ${{ inputs.deploy-status } == 'success'
+    if: always() && ${{ inputs.deploy-status }} == 'success'
     steps:
       - uses: actions/checkout@v4
       - name: Create Tag
