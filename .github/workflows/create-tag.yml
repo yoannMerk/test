@@ -18,7 +18,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Handle deployment status
-        run: echo "STATUS =>  ${{inputs.deploy-status}}"
+        run: |
+          echo "STATUS =>  ${{inputs.deploy-status}}"
+          echo "${{ inputs.deploy-status  }} == 'success'"
 
   fail:
     runs-on: ubuntu-latest
