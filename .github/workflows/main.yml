@@ -54,6 +54,7 @@ jobs:
   create_tag:
    name: Create tag an send slack message
    needs: deploy
+   if: always() && needs.deploy.result == 'success'
    uses: ./.github/workflows/create-tag.yml
    with:
      tag-prefix: "plop_test_02"
