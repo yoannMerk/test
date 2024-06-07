@@ -18,12 +18,9 @@ jobs:
         run: |
           git tag "${{ inputs.tag-prefix }}_$(TZ=America/Montreal date +'%Y%m%dT%H%M')"
           git push --tags
+          
 
-
-  send_message:
-    needs: create_tag
-    runs-on: ubuntu-latest
-
+  fail:
     steps:
       - name: Notify Slack on failure
         if: failure()
@@ -42,9 +39,17 @@ jobs:
                   }
               ]
             }
-      - name: Notify in Slack
-        uses: slackapi/slack-github-action@v1.26.0
-        with:
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_NOTIFICATIONS_TOKEN }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+
+
+  send_message:
+    needs: create_tag
+    runs-on: ubuntu-latest
+    - name: Notify in Slack
+      uses: slackapi/slack-github-action@v1.26.0
+      with:
           payload: |
             {
               "text":"",
