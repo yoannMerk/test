@@ -20,11 +20,11 @@ jobs:
       - name: Handle deployment status
         run: |
           echo "STATUS =>  ${{inputs.deploy-status}}"
-          echo "${{ inputs.deploy-status  }} == 'success'"
+          echo "${{ inputs.deploy-status == 'success' }} "
 
   fail:
     runs-on: ubuntu-latest
-    if: always() && ${{ inputs.deploy-status  }} == 'failure'
+    if: always() && ${{ inputs.deploy-status  == 'failure'  }}
     steps:
       - name: Notify in Slack
         uses: slackapi/slack-github-action@v1.26.0
@@ -48,7 +48,7 @@ jobs:
 
   create_tag:
     runs-on: ubuntu-latest
-    if: always() && ${{ inputs.deploy-status  }} == 'success'
+    if: always() && ${{ inputs.deploy-status  == 'success'  }}
     steps:
       - uses: actions/checkout@v4
       - name: Create Tag
