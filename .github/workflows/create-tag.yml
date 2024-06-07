@@ -15,7 +15,9 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    run: echo "STATUS =>  $(git rev-parse "${inputs.deploy-status}")"
+    steps:
+    - name: LOG
+      run: echo "STATUS =>  ${{inputs.deploy-status}}"
 
   fail:
     runs-on: ubuntu-latest
