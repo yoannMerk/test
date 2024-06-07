@@ -27,37 +27,13 @@ jobs:
       - name: Run a one-line script
         run: exit 1
 
-
-  fail:
-    runs-on: ubuntu-latest
-    needs: deploy
-    if: always() && needs.deploy.result == 'failure'
-    steps:
-      - name: Notify in Slack
-        uses: slackapi/slack-github-action@v1.26.0
-        with:
-          payload: |
-            {
-              "text":"",
-              "blocks":[
-                {
-                  "type":"section",
-                  "text":{
-                    "type":"mrkdwn",
-                    "text":"❌ *Production deployment of _PLOP_ has failed* ❌"
-                  }
-                }
-              ]
-            }
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_NOTIFICATIONS_TOKEN }}
-          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
-
   create_tag:
    name: Create tag an send slack message
    needs: deploy
+   if: always()
    uses: ./.github/workflows/create-tag.yml
    with:
      tag-prefix: "plop_test_02"
      app-name: "Mon app de test"
+     deploy-status: needs.deploy.result
    secrets: inherit

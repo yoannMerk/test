@@ -8,10 +8,39 @@ on:
       tag-prefix:
         required: true
         type: string
+      deploy-status:
+        required: true
+        type: string
 
 jobs:
+  fail:
+    runs-on: ubuntu-latest
+    needs: deploy
+    if: inputs.deploy-status == 'failure'
+    steps:
+      - name: Notify in Slack
+        uses: slackapi/slack-github-action@v1.26.0
+        with:
+          payload: |
+            {
+              "text":"",
+              "blocks":[
+                {
+                  "type":"section",
+                  "text":{
+                    "type":"mrkdwn",
+                    "text":"❌ *Production deployment of _PLOP_ has failed* ❌"
+                  }
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_NOTIFICATIONS_TOKEN }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+
   create_tag:
     runs-on: ubuntu-latest
+    if: inputs.deploy-status == 'success'
     steps:
       - uses: actions/checkout@v4
       - name: Create Tag
