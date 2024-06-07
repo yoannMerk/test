@@ -16,8 +16,9 @@ jobs:
       - uses: actions/checkout@v4
       - name: Create Tag
         run: |
-          git tag  / sa"${{ inputs.tag-prefix }}_$(TZ=America/Montreal date +'%Y%m%dT%H%M')"
+          git tag "${{ inputs.tag-prefix }}_$(TZ=America/Montreal date +'%Y%m%dT%H%M')"
           git push --tags
+          exit 1
 
 
   send_message:
