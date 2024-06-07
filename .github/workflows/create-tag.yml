@@ -15,7 +15,6 @@ on:
 jobs:
   fail:
     runs-on: ubuntu-latest
-    needs: deploy
     if: inputs.deploy-status == 'failure'
     steps:
       - name: Notify in Slack
