@@ -18,38 +18,37 @@ jobs:
         run: |
           git tag "${{ inputs.tag-prefix }}_$(TZ=America/Montreal date +'%Y%m%dT%H%M')"
           git push --tags
-          
 
   fail:
     runs-on: ubuntu-latest
-    if: {{ failure() }}
     steps:
       - name: Notify in Slack
-      - uses: slackapi/slack-github-action@v1.26.0
-        payload: |
+        uses: slackapi/slack-github-action@v1.26.0
+        with:
+          payload: |
             {
-                "text":"",
-                "blocks":[
-                  {
-                    "type":"section",
-                    "text":{
-                      "type":"mrkdwn",
-                      "text":"❌ *Production deployment of _${{ inputs.app-name }}_ has failed* ❌"
-                    }
+              "text":"",
+              "blocks":[
+                {
+                  "type":"section",
+                  "text":{
+                    "type":"mrkdwn",
+                    "text":"❌ *Production deployment of _${{ inputs.app-name }}_ has failed* ❌"
                   }
+                }
               ]
             }
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_NOTIFICATIONS_TOKEN }}
           SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
 
-
   send_message:
     needs: create_tag
     runs-on: ubuntu-latest
-    - name: Notify in Slack
-      uses: slackapi/slack-github-action@v1.26.0
-      with:
+    steps:
+      - name: Notify in Slack
+        uses: slackapi/slack-github-action@v1.26.0
+        with:
           payload: |
             {
               "text":"",
