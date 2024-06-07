@@ -28,7 +28,7 @@ jobs:
         run: exit 1
   fail:
     runs-on: ubuntu-latest
-    if: failure()
+    if: ${{ github.event.workflow_run.conclusion == 'failure' }}
     steps:
       - name: Notify in Slack
         uses: slackapi/slack-github-action@v1.26.0
@@ -41,7 +41,7 @@ jobs:
                   "type":"section",
                   "text":{
                     "type":"mrkdwn",
-                    "text":"❌ *Production deployment of _Mon app de test_ has failed* ❌"
+                    "text":"❌ *Production deployment of _PLOP_ has failed* ❌"
                   }
                 }
               ]
