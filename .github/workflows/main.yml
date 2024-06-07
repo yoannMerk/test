@@ -33,6 +33,6 @@ jobs:
    needs: deploy
    uses: ./.github/workflows/create-tag.yml
    with:
-     tag-prefix: "plop_test_02"
+     tag-prefix: "plop_test_1"
      app-name: "Mon app de test"
    secrets: inherit
