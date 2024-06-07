@@ -15,7 +15,8 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    run: echo "STATUS =>  $(git rev-parse "${inputs.deploy-statu}")"
+    run: echo "STATUS =>  $(git rev-parse "${inputs.deploy-status}")"
+    \
   fail:
     runs-on: ubuntu-latest
     if: always() && ${{ inputs.deploy-status }} == 'failure'
