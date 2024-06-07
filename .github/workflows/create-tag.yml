@@ -14,10 +14,7 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
-    steps:
-    - name: LOG
-      run: echo "STATUS =>  ${{inputs.deploy-status}}"
+    run: echo "STATUS =>  ${{inputs.deploy-status}}"
 
   fail:
     runs-on: ubuntu-latest
