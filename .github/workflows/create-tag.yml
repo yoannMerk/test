@@ -13,8 +13,17 @@ jobs:
   fail:
     runs-on: ubuntu-latest
     if: ${{ github.event.workflow_run.event == 'workflow_run' && github.event.workflow_run.conclusion == 'failure' }}
+
     steps:
+      - name: Check previous job status
+        id: check_status
+        run: |
+          job_status=$(curl -s -X GET \
+          -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+          https://api.github.com/repos/${{ github.repository }}/actions/runs/${{ github.event.workflow_run.id }}/jobs)
+          echo "::set-output name=status::$(echo $job_status | jq '.jobs[] | select(.name=="deploy") | .conclusion')"
       - name: Notify in Slack
+        if: ${{ steps.check_status.outputs.status == '"failure"' }
         uses: slackapi/slack-github-action@v1.26.0
         with:
           payload: |
