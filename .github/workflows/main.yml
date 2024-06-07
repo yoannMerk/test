@@ -26,14 +26,35 @@ jobs:
       # Runs a single command using the runners shell
       - name: Run a one-line script
         run: exit 1
-
+  fail:
+    runs-on: ubuntu-latest
+    if: failure()
+    steps:
+      - name: Notify in Slack
+        uses: slackapi/slack-github-action@v1.26.0
+        with:
+          payload: |
+            {
+              "text":"",
+              "blocks":[
+                {
+                  "type":"section",
+                  "text":{
+                    "type":"mrkdwn",
+                    "text":"❌ *Production deployment of _Mon app de test_ has failed* ❌"
+                  }
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_NOTIFICATIONS_TOKEN }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
 
   create_tag:
    name: Create tag an send slack message
-   if: always()
    needs: deploy
    uses: ./.github/workflows/create-tag.yml
    with:
-     tag-prefix: "plop_test_1"
+     tag-prefix: "plop_test_02"
      app-name: "Mon app de test"
    secrets: inherit
