@@ -35,5 +35,5 @@ jobs:
    with:
      tag-prefix: "plop_test_02"
      app-name: "Mon app de test"
-     deploy-status: needs.deploy.result
+     deploy-status: ${{ needs.deploy.result }}
    secrets: inherit
