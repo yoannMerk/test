@@ -5,7 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1c08e72d-9b69-445e-9848-e439d163e45c" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.github/workflows/main.yml" beforeDir="false" afterPath="$PROJECT_DIR$/.github/workflows/main.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.github/workflows/create-tag.yml" beforeDir="false" afterPath="$PROJECT_DIR$/.github/workflows/create-tag.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -54,7 +54,7 @@
       <workItem from="1713475904367" duration="18000" />
       <workItem from="1713475931468" duration="36574000" />
       <workItem from="1715693029917" duration="13929000" />
-      <workItem from="1717775078827" duration="7783000" />
+      <workItem from="1717775078827" duration="8141000" />
     </task>
     <servers />
   </component>
