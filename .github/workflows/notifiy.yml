@@ -1,0 +1,67 @@
+name: Notify
+on:
+  workflow_call:
+    inputs:
+      app-name:
+        required: true
+        type: string
+      tag-prefix:
+        required: true
+        type: string
+      repo-url:
+        required: true
+        type: string
+
+jobs:
+  send_start_message:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Get last tag
+        run: |
+          git fetch --tags
+          FROM_TAG=$(echo "$(git tag --sort=-committerdate | grep '^${{ inputs.tag-prefix }}' | head -n 2)" | sed -n 1p)
+          echo "FROM_TAG_HASH=$(git rev-parse "${FROM_TAG}")" >> $GITHUB_ENV
+      - name: Generate Slack message
+        id: slack_message
+        run: |
+          latest_commit=$(git rev-parse HEAD)
+          SLACK_MESSAGE=''
+          REPO_URL=${{ inputs.repo-url }}
+          for commit in $(git rev-list $FROM_TAG_HASH..${latest_commit})
+          do
+            short_hash=$(git log --format=%h -n 1 $commit)
+            commit_message=$(git log --format=%s -n 1 $commit | sed "s/\"/'/g")
+            SLACK_MESSAGE+="• <$REPO_URL/commit/${short_hash} | ${short_hash}>: ${commit_message}\n"
+          done
+          SLACK_MESSAGE+="• <${{ inputs.repo-url }}/compare/$FROM_TAG_HASH..${latest_commit}| See full diff>"
+          echo "MESSAGE=$SLACK_MESSAGE" >> $GITHUB_OUTPUT
+
+      - name: Notify in Slack
+        uses: slackapi/slack-github-action@v1.26.0
+        with:
+          payload: |
+            {
+                "text":"",
+                "blocks":[
+                 {
+                    "type":"section",
+                    "text":{
+                      "type":"mrkdwn",
+                      "text":"🚀 *Production deployment of ${{ inputs.app-name }} started* 🚀"
+                    }
+                  },
+                  {
+                    "type": "section",
+                    "text": {
+                      "type": "mrkdwn",
+                      "text": "${{ steps.slack_message.outputs.MESSAGE }}"
+                    }
+                  }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_NOTIFICATIONS_TOKEN }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
