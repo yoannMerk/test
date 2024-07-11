@@ -28,42 +28,36 @@ jobs:
         id: slack_message
         run: |
           latest_commit=$(git rev-parse HEAD)
-          SLACK_MESSAGE=''
           REPO_URL=${{ inputs.repo-url }}
+          FROM_TAG_HASH=$FROM_TAG_HASH
+          SLACK_MESSAGE=""
+          
           for commit in $(git rev-list $FROM_TAG_HASH..${latest_commit})
           do
             short_hash=$(git log --format=%h -n 1 $commit)
             commit_message=$(git log --format=%s -n 1 $commit | sed "s/\"/'/g")
-            SLACK_MESSAGE+='"text": {
-                      "type": "mrkdwn",
-                      "text": "• <$REPO_URL/commit/${short_hash} | ${short_hash}>: ${commit_message}}"
-                    },'
+            SLACK_MESSAGE+='{"type": "section", "text": {"type": "mrkdwn", "text": "• <'$REPO_URL'/commit/'$short_hash'|'$short_hash'>: '$commit_message'"}},'
           done
-          SLACK_MESSAGE+='"text": {
-                      "type": "mrkdwn",
-                      "text": "• <${{ inputs.repo-url }}/compare/$FROM_TAG_HASH..${latest_commit}| See full diff>"
-                    }'
-          SLACK_MESSAGE+='• <${{ inputs.repo-url }}/compare/$FROM_TAG_HASH..${latest_commit}| See full diff>'
-          echo "MESSAGE=$SLACK_MESSAGE" >> $GITHUB_OUTPUT
+          
+          SLACK_MESSAGE+='{"type": "section", "text": {"type": "mrkdwn", "text": "• <'$REPO_URL'/compare/'$FROM_TAG_HASH'..'$latest_commit'| See full diff>"}}'
+          
+          echo "MESSAGE=$SLACK_MESSAGE" >> $GITHUB_ENV
 
       - name: Notify in Slack
         uses: slackapi/slack-github-action@v1.26.0
         with:
           payload: |
             {
-                "text":"",
-                "blocks":[
-                 {
-                    "type":"section",
-                    "text":{
-                      "type":"mrkdwn",
-                      "text":"🚀 *Production deployment of ${{ inputs.app-name }} started* 🚀"
-                    }
-                  },
-                  {
-                    "type": "section",
-                    ${{ steps.slack_message.outputs.MESSAGE }}
+              "text": "",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "🚀 *Production deployment of ${{ inputs.app-name }} started* 🚀"
                   }
+                },
+                ${{ env.MESSAGE }}
               ]
             }
         env:
