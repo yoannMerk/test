@@ -34,9 +34,16 @@ jobs:
           do
             short_hash=$(git log --format=%h -n 1 $commit)
             commit_message=$(git log --format=%s -n 1 $commit | sed "s/\"/'/g")
-            SLACK_MESSAGE+="• <$REPO_URL/commit/${short_hash} | ${short_hash}>: ${commit_message}\n"
+            SLACK_MESSAGE+='"text": {
+                      "type": "mrkdwn",
+                      "text": "• <$REPO_URL/commit/${short_hash} | ${short_hash}>: ${commit_message}}"
+                    },'
           done
-          SLACK_MESSAGE+="• <${{ inputs.repo-url }}/compare/$FROM_TAG_HASH..${latest_commit}| See full diff>"
+          SLACK_MESSAGE+='"text": {
+                      "type": "mrkdwn",
+                      "text": "• <${{ inputs.repo-url }}/compare/$FROM_TAG_HASH..${latest_commit}| See full diff>"
+                    }'
+          SLACK_MESSAGE+='• <${{ inputs.repo-url }}/compare/$FROM_TAG_HASH..${latest_commit}| See full diff>'
           echo "MESSAGE=$SLACK_MESSAGE" >> $GITHUB_OUTPUT
 
       - name: Notify in Slack
@@ -55,14 +62,7 @@ jobs:
                   },
                   {
                     "type": "section",
-                    "text": {
-                      "type": "mrkdwn",
-                      "text": "${{ steps.slack_message.outputs.MESSAGE }}"
-                    },
-                    "text": {
-                      "type": "mrkdwn",
-                      "text": "${{ steps.slack_message.outputs.MESSAGE }}"
-                    }
+                    ${{ steps.slack_message.outputs.MESSAGE }}
                   }
               ]
             }
