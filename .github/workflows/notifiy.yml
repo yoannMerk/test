@@ -59,6 +59,13 @@ jobs:
                       "type": "mrkdwn",
                       "text": "${{ steps.slack_message.outputs.MESSAGE }}"
                     }
+                  },
+            {
+                    "type": "section",
+                    "text": {
+                      "type": "mrkdwn",
+                      "text": "${{ steps.slack_message.outputs.MESSAGE }}"
+                    }
                   }
               ]
             }
