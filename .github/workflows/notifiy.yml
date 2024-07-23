@@ -30,7 +30,7 @@ jobs:
           latest_commit=$(git rev-parse HEAD)
           SLACK_MESSAGE=''
           REPO_URL=${{ inputs.repo-url }}
-          MAX_LENGTH=300
+          MAX_LENGTH=600
           for commit in $(git rev-list $FROM_TAG_HASH..${latest_commit})
           do
            short_hash=$(git log --format=%h -n 1 $commit)
