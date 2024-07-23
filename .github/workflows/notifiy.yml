@@ -52,22 +52,22 @@ jobs:
         with:
           payload: |
             {
-              "text": "",
-              "blocks": [
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "🚀 *Production deployment of ${{ inputs.app-name }} started* 🚀"
-                  },
+                "text":"",
+                "blocks":[
                  {
+                    "type":"section",
+                    "text":{
+                      "type":"mrkdwn",
+                      "text":"*Production deployment of ${{ inputs.app-name }} started*"
+                    }
+                  },
+                  {
                     "type": "section",
                     "text": {
                       "type": "mrkdwn",
                       "text": "${{ steps.slack_message.outputs.MESSAGE }}"
                     }
                   }
-                }
               ]
             }
         env:
