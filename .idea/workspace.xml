@@ -4,7 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1c08e72d-9b69-445e-9848-e439d163e45c" name="Changes" comment="" />
+    <list default="true" id="1c08e72d-9b69-445e-9848-e439d163e45c" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.github/workflows/notifiy.yml" beforeDir="false" afterPath="$PROJECT_DIR$/.github/workflows/notifiy.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -55,7 +58,7 @@
       <workItem from="1717775078827" duration="9356000" />
       <workItem from="1720720129515" duration="3344000" />
       <workItem from="1721693746116" duration="598000" />
-      <workItem from="1721765877255" duration="416000" />
+      <workItem from="1721765877255" duration="970000" />
     </task>
     <servers />
   </component>
@@ -67,7 +70,19 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="main" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
           </value>
         </entry>
       </map>
