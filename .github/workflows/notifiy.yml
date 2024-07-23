@@ -38,7 +38,7 @@ jobs:
            commit_message=$(git log --format=%s -n 1 $commit | sed "s/\"/'/g")
            new_entry="• <$REPO_URL/commit/${short_hash} | ${short_hash}> (${short_author}): ${commit_message}\n"
            if [ $((${#SLACK_MESSAGE} + ${#new_entry})) -gt $MAX_LENGTH ]; then
-             SLACK_MESSAGE+="• Commit list has been truncated\n""
+             SLACK_MESSAGE+="• Commit list has been truncated\n"
              break
            fi
            SLACK_MESSAGE+="$new_entry"
