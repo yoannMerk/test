@@ -1,22 +1,19 @@
-name: Check for fixup! commits
+name: Block Fixup Commits
 
 on:
   pull_request:
-    types: [opened, synchronize]
+    types: [opened, synchronize, reopened, edited]
 
 jobs:
-  check-fixup-commits:
+  block-fixup:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Check for fixup! commits
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Block Fixup Commit Merging
         run: |
-          if git log --format=%B ${{ github.event.pull_request.base.sha }}..${{ github.sha }} | grep 'fixup!'; then
-            echo "fixup! commits detected, blocking merge."
+          if git log --pretty=format:%s origin/${{ github.base_ref }}..HEAD | grep -q "^fixup!"; then
+            echo "Fixup commits detected. Please squash these commits before merging."
             exit 1
-          else
-            echo "No fixup! commits found."
           fi
