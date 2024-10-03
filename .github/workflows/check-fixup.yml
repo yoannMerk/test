@@ -1,0 +1,22 @@
+name: Check for fixup! commits
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  check-fixup-commits:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Check for fixup! commits
+        run: |
+          if git log --format=%B ${{ github.event.pull_request.base.sha }}..${{ github.sha }} | grep 'fixup!'; then
+            echo "fixup! commits detected, blocking merge."
+            exit 1
+          else
+            echo "No fixup! commits found."
+          fi
